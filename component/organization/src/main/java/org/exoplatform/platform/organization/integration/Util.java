@@ -17,7 +17,9 @@
 package org.exoplatform.platform.organization.integration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -25,6 +27,8 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.exoplatform.services.jcr.access.PermissionType;
+import org.exoplatform.services.jcr.core.ExtendedNode;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.Group;
@@ -235,6 +239,15 @@ public class Util {
 
   private static Node createFolder(Node parentNode, String name) throws Exception {
     Node orgIntServNode = parentNode.addNode(name, "nt:folder");
+    if (name.equals(ORGANIZATION_INITIALIZATIONS)) {
+      if (orgIntServNode.canAddMixin("exo:privilegeable")) {
+        orgIntServNode.addMixin("exo:privilegeable");
+        Map<String, String[]> permissions = new HashMap<String, String[]>();
+        permissions.put("*:/platform/administrators", PermissionType.ALL);
+        ((ExtendedNode)orgIntServNode).setPermissions(permissions);
+        orgIntServNode.getSession().save();
+      }
+    }
     parentNode.getSession().save();
     //TODO : Exceptions are not handled correctly
     if(orgIntServNode.canAddMixin("exo:hiddenable")){
