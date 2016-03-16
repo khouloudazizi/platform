@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.exoplatform.platform</groupId>
   <artifactId>platform</artifactId>
-  <version>4.4.x-SNAPSHOT</version>
+  <version>4.4.x-mentioning-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>eXo Platform</name>
   <description>Parent POM for platform projects.</description>
@@ -41,10 +41,10 @@
     <!-- **************************************** -->
     <org.exoplatform.depmgt.version>12-SNAPSHOT</org.exoplatform.depmgt.version>
     <!-- JCR Project Dependencies -->
-    <org.exoplatform.kernel.version>2.6.x-SNAPSHOT</org.exoplatform.kernel.version>
-    <org.exoplatform.core.version>2.7.x-SNAPSHOT</org.exoplatform.core.version>
-    <org.exoplatform.ws.version>2.5.x-SNAPSHOT</org.exoplatform.ws.version>
-    <org.exoplatform.jcr.version>1.17.x-SNAPSHOT</org.exoplatform.jcr.version>
+    <org.exoplatform.kernel.version>2.6.x-mentioning-SNAPSHOT</org.exoplatform.kernel.version>
+    <org.exoplatform.core.version>2.7.x-mentioning-SNAPSHOT</org.exoplatform.core.version>
+    <org.exoplatform.ws.version>2.5.x-mentioning-SNAPSHOT</org.exoplatform.ws.version>
+    <org.exoplatform.jcr.version>1.17.x-mentioning-SNAPSHOT</org.exoplatform.jcr.version>
     <!-- GateIn Project Dependencies -->
     <org.gatein.shindig.version>2.0.2.Final-gatein-4</org.gatein.shindig.version>
 
@@ -52,17 +52,17 @@
     <org.gatein.wci.version>2.4.1.Final</org.gatein.wci.version>
     <org.gatein.pc.version>2.6.x-PLF-SNAPSHOT</org.gatein.pc.version>
     <org.gatein.sso.version>1.4.5.Final</org.gatein.sso.version>
-    <org.gatein.portal.version>4.4.x-PLF-SNAPSHOT</org.gatein.portal.version>
+    <org.gatein.portal.version>4.4.x-PLF-mentioning-SNAPSHOT</org.gatein.portal.version>
 
     <!-- Platform Project Dependencies -->
-    <org.exoplatform.commons.version>4.4.x-SNAPSHOT</org.exoplatform.commons.version>
-    <org.exoplatform.ecms.version>4.4.x-SNAPSHOT</org.exoplatform.ecms.version>
-    <org.exoplatform.social.version>4.4.x-SNAPSHOT</org.exoplatform.social.version>
-    <org.exoplatform.forum.version>4.4.x-SNAPSHOT</org.exoplatform.forum.version>
-    <org.exoplatform.wiki.version>4.4.x-SNAPSHOT</org.exoplatform.wiki.version>
-    <org.exoplatform.calendar.version>4.4.x-SNAPSHOT</org.exoplatform.calendar.version>
-    <org.exoplatform.integ.version>4.4.x-SNAPSHOT</org.exoplatform.integ.version>
-    <org.exoplatform.platform-ui.version>4.4.x-SNAPSHOT</org.exoplatform.platform-ui.version>
+    <org.exoplatform.commons.version>4.4.x-mentioning-SNAPSHOT</org.exoplatform.commons.version>
+    <org.exoplatform.ecms.version>4.4.x-mentioning-SNAPSHOT</org.exoplatform.ecms.version>
+    <org.exoplatform.social.version>4.4.x-mentioning-SNAPSHOT</org.exoplatform.social.version>
+    <org.exoplatform.forum.version>4.4.x-mentioning-SNAPSHOT</org.exoplatform.forum.version>
+    <org.exoplatform.wiki.version>4.4.x-mentioning-SNAPSHOT</org.exoplatform.wiki.version>
+    <org.exoplatform.calendar.version>4.4.x-mentioning-SNAPSHOT</org.exoplatform.calendar.version>
+    <org.exoplatform.integ.version>4.4.x-mentioning-SNAPSHOT</org.exoplatform.integ.version>
+    <org.exoplatform.platform-ui.version>4.4.x-mentioning-SNAPSHOT</org.exoplatform.platform-ui.version>
 
     <juzu.version>1.1.0</juzu.version>
   </properties>
