@@ -21,6 +21,7 @@
         openInDocuments: "Open in Documents",
         likeActivity: "Like",
         postCommentHint: "Use @ to identify a person in your comment...",
+        lengthExceed: "You have reached 2000 characters allowed in the comment.",
         comment: "Comment",
         cancel: "Cancel",
         noComment: "No comment yet",
@@ -258,6 +259,9 @@
                     <img src="' + this.settings.user.avatarUrl + '" alt="' + this.settings.user.fullname + '" /></a> \
                     <div class="commentBox"> \
                       <textarea id="commentInput" placeholder="' + this.settings.labels.postCommentHint + '" cols="30" rows="10" id="commentTextAreaPreview" activityId="activityId" class="textarea"></textarea> \
+                      <div class="commentLimited hide"> \
+                        <span class="error">' + this.settings.labels.lengthExceed + '</span> \
+                      </div> \
                       <button class="btn pull-left btn-primary" rel="tooltip" data-placement="bottom" title="comment" id="CommentButton" disabled>' + this.settings.labels.comment + '</button> \
                       <button class="btn pull-left" rel="tooltip" data-placement="bottom" title="cancel" id="CancelButton">' + this.settings.labels.cancel + '</button> \
                     </div> \
@@ -676,8 +680,10 @@
                 
                 if (pureText.length <= MAX_LENGTH) {
                     evt.editor.getCommand('simpleImage').enable();
+                    $('.commentLimited').addClass('hide');
                 } else {
                     evt.editor.getCommand('simpleImage').disable();
+                    $('.commentLimited').removeClass('hide');
                 }
             },
             key: function( evt) {
