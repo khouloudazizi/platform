@@ -693,6 +693,8 @@
                     if ([8, 46, 33, 34, 35, 36, 37,38,39,40].indexOf(evt.data.keyCode) < 0) {
                         evt.cancel();
                     }
+                } else {
+                  $('.commentLimited').addClass('hide');
                 }
             }
           }
