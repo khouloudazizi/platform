@@ -688,6 +688,7 @@
 
     hide: function () {
       $('#documentPreviewContainer').hide();
+      $('.uiIconRefresh').click();
     }
 
   };;
