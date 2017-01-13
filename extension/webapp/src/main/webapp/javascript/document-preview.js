@@ -36,9 +36,15 @@
       comments: null
     },
     settings: {},
+    
+    activityForm: {
+      id: null
+    },
 
-    init: function (docPreviewSettings) {
+    init: function (docPreviewSettings, ActivityFormId) {
       this.settings = $.extend(this.defaultSettings, docPreviewSettings);
+      
+      this.activityForm.id = ActivityFormId;
 
       var promises = [];
 
@@ -487,6 +493,7 @@
             $('#documentPreviewContainer #commentInput').ckeditorGet().destroy(true);
             self.initCKEditor();
             self.clearErrorMessage();
+            eXo.webui.UIForm.submitEvent(self.activityForm.id);
           }).fail(function () {
             self.showErrorMessage("${UIActivity.comment.canNotAddComment}");
             console.log("Can not post comment!");
@@ -688,7 +695,6 @@
 
     hide: function () {
       $('#documentPreviewContainer').hide();
-      $('.uiIconRefresh').click();
     }
 
   };;
