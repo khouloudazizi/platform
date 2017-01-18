@@ -28,8 +28,8 @@
     <page>
         <name>registry</name>
         <title>Registry</title>
-        <access-permissions>manager:/platform/administrators</access-permissions>
-        <edit-permission>manager:/platform/administrators</edit-permission>
+        <access-permissions>*:/platform/administrators</access-permissions>
+        <edit-permission>*:/platform/administrators</edit-permission>
         <portlet-application>
             <portlet>
                 <application-ref>exoadmin</application-ref>
@@ -42,7 +42,7 @@
                 </preferences>
             </portlet>
             <title>Application Registry</title>
-            <access-permissions>manager:/platform/administrators</access-permissions>
+            <access-permissions>*:/platform/administrators</access-permissions>
             <show-info-bar>false</show-info-bar>
         </portlet-application>
     </page>
@@ -50,23 +50,23 @@
     <page>
         <name>pageManagement</name>
         <title>Page Management</title>
-        <access-permissions>manager:/platform/administrators</access-permissions>
-        <edit-permission>manager:/platform/administrators</edit-permission>
+        <access-permissions>*:/platform/administrators</access-permissions>
+        <edit-permission>*:/platform/administrators</edit-permission>
         <portlet-application>
             <portlet>
                 <application-ref>exoadmin</application-ref>
                 <portlet-ref>PageManagementPortlet</portlet-ref>
             </portlet>
             <title>Page Management</title>
-            <access-permissions>manager:/platform/administrators</access-permissions>
+            <access-permissions>*:/platform/administrators</access-permissions>
             <show-info-bar>false</show-info-bar>
         </portlet-application>
     </page>
     <page>
         <name>newStaff</name>
         <title>New Staff</title>
-        <access-permissions>manager:/platform/administrators</access-permissions>
-        <edit-permission>manager:/platform/administrators</edit-permission>
+        <access-permissions>*:/platform/administrators</access-permissions>
+        <edit-permission>*:/platform/administrators</edit-permission>
 
         <portlet-application>
             <portlet>
@@ -83,8 +83,8 @@
     <page>
         <name>management</name>
         <title>Organization Management</title>
-        <access-permissions>manager:/platform/administrators</access-permissions>
-        <edit-permission>manager:/platform/administrators</edit-permission>
+        <access-permissions>*:/platform/administrators</access-permissions>
+        <edit-permission>*:/platform/administrators</edit-permission>
 
         <portlet-application>
             <portlet>
@@ -100,8 +100,8 @@
     <page>
         <name>portalnavigation</name>
         <title>Portal Navigation</title>
-        <access-permissions>manager:/platform/administrators</access-permissions>
-        <edit-permission>manager:/platform/administrators</edit-permission>
+        <access-permissions>*:/platform/administrators</access-permissions>
+        <edit-permission>*:/platform/administrators</edit-permission>
         <portlet-application>
             <portlet>
                 <application-ref>exoadmin</application-ref>
@@ -117,8 +117,8 @@
     <page>
         <name>groupnavigation</name>
         <title>Group Navigation</title>
-        <access-permissions>manager:/platform/administrators</access-permissions>
-        <edit-permission>manager:/platform/administrators</edit-permission>
+        <access-permissions>*:/platform/administrators</access-permissions>
+        <edit-permission>*:/platform/administrators</edit-permission>
         <portlet-application>
             <portlet>
                 <application-ref>exoadmin</application-ref>
@@ -132,8 +132,8 @@
     <page>
         <name>servicesManagement</name>
         <title>Services Management</title>
-        <access-permissions>manager:/platform/administrators</access-permissions>
-        <edit-permission>manager:/platform/administrators</edit-permission>
+        <access-permissions>*:/platform/administrators</access-permissions>
+        <edit-permission>*:/platform/administrators</edit-permission>
         <gadget-application>
             <gadget>
                 <gadget-ref>ServicesManagement</gadget-ref>
@@ -146,13 +146,13 @@
     <page>
         <name>monitoring</name>
         <title>Monitoring</title>
-        <access-permissions>manager:/platform/administrators</access-permissions>
-        <edit-permission>manager:/platform/administrators</edit-permission>
+        <access-permissions>*:/platform/administrators</access-permissions>
+        <edit-permission>*:/platform/administrators</edit-permission>
 
         <container id="Monitoringbody" template="system:/groovy/portal/webui/container/UITableColumnContainer.gtmpl">
-            <access-permissions>manager:/platform/administrators</access-permissions>
+            <access-permissions>*:/platform/administrators</access-permissions>
             <container id="MonitoringLeft" template="system:/groovy/portal/webui/container/UIContainer.gtmpl">
-                <access-permissions>manager:/platform/administrators</access-permissions>
+                <access-permissions>*:/platform/administrators</access-permissions>
                 <!-- MemoryCharts gadget -->
                 <portlet-application>
                     <portlet>
@@ -167,14 +167,14 @@
                         </preferences>
                     </portlet>
                     <title>Gadget Portlet</title>
-                    <access-permissions>manager:/platform/administrators</access-permissions>
+                    <access-permissions>*:/platform/administrators</access-permissions>
                     <show-info-bar>false</show-info-bar>
                     <show-application-state>true</show-application-state>
                 </portlet-application>
             </container>
 
             <container id="MonitoringMiddle"  template="system:/groovy/portal/webui/container/UIContainer.gtmpl">
-                <access-permissions>manager:/platform/administrators</access-permissions>
+                <access-permissions>*:/platform/administrators</access-permissions>
                 <portlet-application>
                     <portlet>
                         <application-ref>dashboard</application-ref>
@@ -188,14 +188,14 @@
                         </preferences>
                     </portlet>
                     <title>Gadget Portlet</title>
-                    <access-permissions>manager:/platform/administrators</access-permissions>
+                    <access-permissions>*:/platform/administrators</access-permissions>
                     <show-info-bar>false</show-info-bar>
                     <show-application-state>true</show-application-state>
                 </portlet-application>
             </container>
 
             <container id="MonitoringRight"  template="system:/groovy/portal/webui/container/UIContainer.gtmpl">
-                <access-permissions>manager:/platform/administrators</access-permissions>
+                <access-permissions>*:/platform/administrators</access-permissions>
                 <!-- ApplicationsStatistics gadget -->
                 <portlet-application>
                     <portlet>
@@ -210,7 +210,7 @@
                         </preferences>
                     </portlet>
                     <title>Gadget Portlet</title>
-                    <access-permissions>manager:/platform/administrators</access-permissions>
+                    <access-permissions>*:/platform/administrators</access-permissions>
                     <show-info-bar>false</show-info-bar>
                     <show-application-state>true</show-application-state>
                 </portlet-application>
@@ -220,23 +220,23 @@
 	<page>
 		<name>branding</name>
 		<title>Branding</title>
-		<access-permissions>manager:/platform/administrators</access-permissions>
-		<edit-permission>manager:/platform/administrators</edit-permission>
+		<access-permissions>*:/platform/administrators</access-permissions>
+		<edit-permission>*:/platform/administrators</edit-permission>
 		<portlet-application>
 			<portlet>
 				<application-ref>platform-branding</application-ref>
 				<portlet-ref>Branding</portlet-ref>
 			</portlet>
 			<title>Branding Portlet</title>
-		    <access-permissions>manager:/platform/administrators</access-permissions>
+		    <access-permissions>*:/platform/administrators</access-permissions>
 			<show-info-bar>false</show-info-bar>
 		</portlet-application>
 	</page>
     <page>
         <name>search</name>
         <title>search</title>
-        <access-permissions>manager:/platform/administrators</access-permissions>
-        <edit-permission>manager:/platform/administrators</edit-permission>
+        <access-permissions>*:/platform/administrators</access-permissions>
+        <edit-permission>*:/platform/administrators</edit-permission>
         <portlet-application>
             <portlet>
                 <application-ref>unified-search</application-ref>
@@ -250,8 +250,8 @@
     <page>
     <name>notification</name>
     <title>Notifications Administration</title>
-    <access-permissions>manager:/platform/administrators</access-permissions>
-    <edit-permission>manager:/platform/administrators</edit-permission>
+    <access-permissions>*:/platform/administrators</access-permissions>
+    <edit-permission>*:/platform/administrators</edit-permission>
     <portlet-application>
       <portlet>
         <application-ref>platform-notification</application-ref>
