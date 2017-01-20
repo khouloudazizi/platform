@@ -31,20 +31,19 @@
         postTime: "",
         status: "",
         liked: null,
-        likes: null
+        likes: null,
+        formId: null
       },
       comments: null
     },
     settings: {},
-    
-    activityForm: {
-      id: null
-    },
 
-    init: function (docPreviewSettings, ActivityFormId) {
+    init: function (docPreviewSettings, activityForm) {
       this.settings = $.extend(this.defaultSettings, docPreviewSettings);
-      
-      this.activityForm.id = ActivityFormId;
+
+      if (activityForm != null) {
+        this.settings.activity.formId = activityForm.id;
+      }
 
       var promises = [];
 
@@ -151,6 +150,9 @@
             $('#documentPreviewContainer .nbOfLikes').html(self.settings.activity.likes);
             self.refreshLikeLink();
             self.clearErrorMessage();
+            if (self.settings.activity.formId != null) {
+              $(document).trigger("exo-update-activity", self.settings.activity.formId);
+            }
           }).fail(function () {
             self.showErrorMessage("${UIActivity.comment.canNotLike}");
             console.log("Can not like document!");
@@ -165,6 +167,9 @@
             $('#documentPreviewContainer .nbOfLikes').html(self.settings.activity.likes);
             self.refreshLikeLink();
             self.clearErrorMessage();
+            if (self.settings.activity.formId != null) {
+              $(document).trigger("exo-update-activity", self.settings.activity.formId);
+            }
           }).fail(function () {
             self.showErrorMessage("${UIActivity.comment.canNotUnLike}");
             console.log("Can not delete like of document!");
@@ -493,7 +498,9 @@
             $('#documentPreviewContainer #commentInput').ckeditorGet().destroy(true);
             self.initCKEditor();
             self.clearErrorMessage();
-            eXo.webui.UIForm.submitEvent(self.activityForm.id);
+            if (self.settings.activity.formId != null) {
+              $(document).trigger("exo-update-activity", self.settings.activity.formId);
+            }
           }).fail(function () {
             self.showErrorMessage("${UIActivity.comment.canNotAddComment}");
             console.log("Can not post comment!");
