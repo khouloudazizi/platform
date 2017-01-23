@@ -67,6 +67,13 @@ public class Util {
     } else {
       organizationInitializersHomePathNode = homePathNode.getNode(ORGANIZATION_INITIALIZATIONS);
     }
+    // restrict OrganizationIntegrationService folder access to *:/platform/administrators
+    organizationInitializersHomePathNode.addMixin("exo:privilegeable");
+    Map<String, String[]> permissions = new HashMap<>();
+    permissions.put("*:/platform/administrators", PermissionType.ALL);
+    ((ExtendedNode)organizationInitializersHomePathNode).setPermissions(permissions);
+    organizationInitializersHomePathNode.getSession().save();
+    
     if (!organizationInitializersHomePathNode.hasNode(USERS_FOLDER)) {
       createFolder(organizationInitializersHomePathNode, USERS_FOLDER);
     }
@@ -239,15 +246,6 @@ public class Util {
 
   private static Node createFolder(Node parentNode, String name) throws Exception {
     Node orgIntServNode = parentNode.addNode(name, "nt:folder");
-    if (name.equals(ORGANIZATION_INITIALIZATIONS)) {
-      if (orgIntServNode.canAddMixin("exo:privilegeable")) {
-        orgIntServNode.addMixin("exo:privilegeable");
-        Map<String, String[]> permissions = new HashMap<String, String[]>();
-        permissions.put("*:/platform/administrators", PermissionType.ALL);
-        ((ExtendedNode)orgIntServNode).setPermissions(permissions);
-        orgIntServNode.getSession().save();
-      }
-    }
     parentNode.getSession().save();
     //TODO : Exceptions are not handled correctly
     if(orgIntServNode.canAddMixin("exo:hiddenable")){
