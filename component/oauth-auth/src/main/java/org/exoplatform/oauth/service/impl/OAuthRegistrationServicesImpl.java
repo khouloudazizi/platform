@@ -52,6 +52,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -124,7 +125,7 @@ public class OAuthRegistrationServicesImpl implements OAuthRegistrationServices 
         if (foundUser == null && cookies != null && cookies.length > 0) {
           for (Cookie cookie : cookies) {
             if (OAuthAbstractFilter.COOKIE_LAST_LOGIN.equals(cookie.getName())) {
-              username = cookie.getValue();
+              username = URLDecoder.decode(cookie.getValue(), "UTF-8");
               if(username != null && username.length() > 0) {
                 query = new Query();
                 query.setUserName(username);
