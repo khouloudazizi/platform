@@ -85,7 +85,7 @@ public class FavoriteRESTService implements ResourceContainer {
         favoriteNode.setName(favorite.getName());
         favoriteNode.setTitle(getTitle(favorite));
         favoriteNode.setDateAddFavorite(getDateFormat(favorite.getProperty(DATE_MODIFIED).getDate()));
-        favoriteNode.setNodePath(favorite.getPath());
+        favoriteNode.setNodePath(favorite.getPath()+ "&userId=" + userName);
         String linkImage = "Icon16x16 default16x16Icon" + getNodeTypeIcon(favorite, "16x16Icon");
         favoriteNode.setLinkImage(linkImage);
 
@@ -133,7 +133,7 @@ public class FavoriteRESTService implements ResourceContainer {
         favoriteNode.setName(favorite.getName());
         favoriteNode.setTitle(getTitle(favorite));
         favoriteNode.setDateAddFavorite(getDateFormat(favorite.getProperty(DATE_MODIFIED).getDate()));
-        favoriteNode.setNodePath(favorite.getPath());
+        favoriteNode.setNodePath(favorite.getPath()+ "&userId=" + userName);
         String linkImage = "Icon16x16 default16x16Icon" + getNodeTypeIcon(favorite, "16x16Icon");
         favoriteNode.setLinkImage(linkImage);
         
@@ -195,7 +195,7 @@ public class FavoriteRESTService implements ResourceContainer {
 		    LinkManager linkManager = (LinkManager)ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(LinkManager.class);
 	      try {
 	        nodeType = node.getProperty("exo:primaryType").getString();
-	        node = linkManager.getTarget(node);
+	        node = linkManager.getTarget(node,true);
 	        if (node == null)
 	          return "";
 	      } catch (Exception e) {
