@@ -85,7 +85,7 @@ public class FavoriteRESTService implements ResourceContainer {
         favoriteNode.setName(favorite.getName());
         favoriteNode.setTitle(getTitle(favorite));
         favoriteNode.setDateAddFavorite(getDateFormat(favorite.getProperty(DATE_MODIFIED).getDate()));
-        favoriteNode.setNodePath(favorite.getPath()+ "&userId=" + userName);
+        favoriteNode.setNodePath(favorite.getPath());
         String linkImage = "Icon16x16 default16x16Icon" + getNodeTypeIcon(favorite, "16x16Icon");
         favoriteNode.setLinkImage(linkImage);
 
@@ -133,7 +133,7 @@ public class FavoriteRESTService implements ResourceContainer {
         favoriteNode.setName(favorite.getName());
         favoriteNode.setTitle(getTitle(favorite));
         favoriteNode.setDateAddFavorite(getDateFormat(favorite.getProperty(DATE_MODIFIED).getDate()));
-        favoriteNode.setNodePath(favorite.getPath()+ "&userId=" + userName);
+        favoriteNode.setNodePath(favorite.getPath());
         String linkImage = "Icon16x16 default16x16Icon" + getNodeTypeIcon(favorite, "16x16Icon");
         favoriteNode.setLinkImage(linkImage);
         

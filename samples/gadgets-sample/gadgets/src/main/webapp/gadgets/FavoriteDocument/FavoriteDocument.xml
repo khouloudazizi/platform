@@ -156,6 +156,8 @@ displayValue = function(resp) {
       link += "href='";  
       link += accessUrl + "?path=Personal Documents";            
       link += doc.nodePath;
+      link+="&userId=";
+      link+=userId;
       link += "'";
     }
     link += "><b>";
