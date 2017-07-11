@@ -44,7 +44,7 @@
 	          </cache>
 	          <query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex">
 	            <properties>
-	              <property name="index-dir" value="${gatein.jcr.index.data.dir}/collaboration${container.name.suffix}"/>
+	              <property name="index-dir" value="${exo.jcr.index.rsync-entry-path}/repository/collaboration${container.name.suffix}"/>
 	              <property name="changesfilter-class" value="${gatein.jcr.index.changefilterclass}" />
 	              <property name="infinispan-configuration" value="${gatein.jcr.index.cache.config}" />
 	              <property name="jgroups-configuration" value="${gatein.jcr.jgroups.config}" />
