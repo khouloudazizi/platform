@@ -449,8 +449,9 @@ public class OrganizationIntegrationService implements Startable {
           ListAccess<User> usersListAccess = organizationService.getUserHandler().findAllUsers();
 
           int i = 0;
-          while (i <= usersListAccess.getSize()) {
-            int length = i + 10 <= usersListAccess.getSize() ? 10 : usersListAccess.getSize() - i;
+          int usersListAccessSize = usersListAccess.getSize();
+          while (i < usersListAccess.getSize()) {
+            int length = i + 10 < usersListAccessSize ? 10 : usersListAccessSize - i;
             User[] users = usersListAccess.load(i, length);
             for (User user : users) {
               activatedUsers.remove(user.getUserName());
@@ -502,8 +503,9 @@ public class OrganizationIntegrationService implements Startable {
           }
           ListAccess<User> usersListAccess = organizationService.getUserHandler().findAllUsers();
           int i = 0;
-          while (i <= usersListAccess.getSize()) {
-            int length = i + 10 <= usersListAccess.getSize() ? 10 : usersListAccess.getSize() - i;
+          int usersListAccessSize = usersListAccess.getSize();
+          while (i < usersListAccessSize) {
+            int length = i + 10 < usersListAccessSize ? 10 : usersListAccessSize - i;
             User[] users = usersListAccess.load(i, length);
             for (User user : users) {
               if (!activatedUsers.contains(user.getUserName())) {
