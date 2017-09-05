@@ -451,12 +451,12 @@ public class OrganizationIntegrationService implements Startable {
           int i = 0;
           int usersListAccessSize = usersListAccess.getSize();
           while (i < usersListAccess.getSize()) {
-            int length = i + 10 < usersListAccessSize ? 10 : usersListAccessSize - i;
+            int length = i + 300 < usersListAccessSize ? 300 : usersListAccessSize - i;
             User[] users = usersListAccess.load(i, length);
             for (User user : users) {
               activatedUsers.remove(user.getUserName());
             }
-            i += 10;
+            i += 300;
           }
           for (String username : activatedUsers) {
             syncUser(username, eventType);
@@ -505,14 +505,14 @@ public class OrganizationIntegrationService implements Startable {
           int i = 0;
           int usersListAccessSize = usersListAccess.getSize();
           while (i < usersListAccessSize) {
-            int length = i + 10 < usersListAccessSize ? 10 : usersListAccessSize - i;
+            int length = i + 300 < usersListAccessSize ? 300 : usersListAccessSize - i;
             User[] users = usersListAccess.load(i, length);
             for (User user : users) {
               if (!activatedUsers.contains(user.getUserName())) {
                 syncUser(user.getUserName(), eventType);
               }
             }
-            i += 10;
+            i += 300;
           }
         } catch (Exception e) {
           LOG.error("\tUnknown error occurred while preparing to proceed user update", e);
