@@ -502,17 +502,24 @@ public class OrganizationIntegrationService implements Startable {
             LOG.debug("\tAll new users intagration: Search for already existing users in Datasource but not integrated yet.");
           }
           ListAccess<User> usersListAccess = organizationService.getUserHandler().findAllUsers();
-          int i = 0;
           int usersListAccessSize = usersListAccess.getSize();
-          while (i < usersListAccessSize) {
+          int i = usersListAccessSize-300;
+          int j= 0;
+          int numberOfNotSynchronizedUsers = usersListAccessSize - activatedUsers.size();
+          outerloop:
+          while (i > 0) {
             int length = i + 300 < usersListAccessSize ? 300 : usersListAccessSize - i;
             User[] users = usersListAccess.load(i, length);
             for (User user : users) {
               if (!activatedUsers.contains(user.getUserName())) {
                 syncUser(user.getUserName(), eventType);
+                j++;
+                if(j == numberOfNotSynchronizedUsers){
+                  break outerloop;
+                }
               }
             }
-            i += 300;
+            i -= 300;
           }
         } catch (Exception e) {
           LOG.error("\tUnknown error occurred while preparing to proceed user update", e);
