@@ -68,8 +68,6 @@ public class SpaceRestServiceImpl implements ResourceContainer {
         StringBuffer baseSpaceURL = null;
         List<Space> spaces = new ArrayList<Space>();
         try {
-
-            List<Space> alphabeticallySort = new ArrayList<Space>();
             String userId = sc.getUserPrincipal().getName();
             if (userId == null) {
                 return Response.status(500).cacheControl(cacheControl).build();
@@ -80,11 +78,22 @@ public class SpaceRestServiceImpl implements ResourceContainer {
                 listAccess = spaceService.getMemberSpacesByFilter(userId, new SpaceFilter(keyword));
             }
             //--- List of searchedSpaces
-            List<Space> spacesSearched = Arrays.asList(listAccess.load(0, MAX_LOADED_SPACES_BY_REQUEST));
-            //--- List of spaces sorted by access/alphabet
-            ListAccess<Space> allSpacesSorted = spaceService.getVisitedSpaces(userId, null);
-            //--- Convert user spaces to List collection
-            spaces = Arrays.asList(allSpacesSorted.load(0,MAX_LOADED_SPACES_BY_REQUEST));
+            spaces = Arrays.asList(listAccess.load(0, MAX_LOADED_SPACES_BY_REQUEST));
+            // --- Sort spaces by alphabetic/access order
+            List<Space> sortedSpaces = new ArrayList<Space>();
+            List<Space> sortedAccessedSpaces = spaceService.getLastAccessedSpace(userId,null,0,MAX_LOADED_SPACES_BY_REQUEST);
+            int spacesSize = spaces.size();
+            int offset = MAX_LOADED_SPACES_BY_REQUEST;
+            while(sortedSpaces.size() < spacesSize){
+                for (Space space : sortedAccessedSpaces){
+                    if(spaces.contains(space)){
+                        sortedSpaces.add(space);
+                    }
+                }
+                sortedAccessedSpaces = spaceService.getLastAccessedSpace(userId,null,offset, MAX_LOADED_SPACES_BY_REQUEST);
+                offset += MAX_LOADED_SPACES_BY_REQUEST;
+            }
+
 
             List<Object> sortedSearchedSpaces = new ArrayList<Object>();
 
@@ -94,7 +103,6 @@ public class SpaceRestServiceImpl implements ResourceContainer {
                 baseSpaceURL.append(PortalContainer.getCurrentPortalContainerName()+ "/g/:spaces:") ;
                 String groupId = space.getGroupId();
                 String permanentSpaceName = groupId.split("/")[2];
-                if ((filterSpace(space.getId(), spacesSearched))) {
                     if (permanentSpaceName.equals(space.getPrettyName())) {
                         baseSpaceURL.append(permanentSpaceName) ;
                         baseSpaceURL.append("/");
@@ -108,7 +116,6 @@ public class SpaceRestServiceImpl implements ResourceContainer {
                     space.setUrl(baseSpaceURL.toString());
 
                     sortedSearchedSpaces.add(extractObject(space, fields));
-                }
             }
 
 
@@ -120,14 +127,6 @@ public class SpaceRestServiceImpl implements ResourceContainer {
             }
         }
         return Response.status(500).cacheControl(cacheControl).build();
-    }
-    private static boolean filterSpace(String spaceId, List<Space> spacesSearched) {
-        for (Space space : spacesSearched) {
-            if (space.getId().equalsIgnoreCase(spaceId)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private Object extractObject(Object from, String fields) {
