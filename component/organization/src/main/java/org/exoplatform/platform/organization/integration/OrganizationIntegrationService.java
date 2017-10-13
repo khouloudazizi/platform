@@ -452,10 +452,16 @@ public class OrganizationIntegrationService implements Startable {
 
           int i = 0;
           int usersListAccessSize = usersListAccess.getSize();
+          String lastExisting = "";
+          outerloop:
           while (i < usersListAccess.getSize()) {
             int length = i + 300 < usersListAccessSize ? 300 : usersListAccessSize - i;
             User[] users = usersListAccess.load(i, length);
             for (User user : users) {
+              if(user.getUserName().equals(lastExisting)){
+                break outerloop;
+              }
+              lastExisting = user.getUserName();
               activatedUsers.remove(user.getUserName());
             }
             i += 300;
@@ -509,12 +515,16 @@ public class OrganizationIntegrationService implements Startable {
           int i = 0;
           int j = 0;
           int numberOfNotSynchronizedUsers = usersListAccessSize - activatedUsers.size();
+          String lastExisting = "";
           outerloop:
           while (i > usersListAccessSize) {
             int index = l - 300 > 0 ? l-300 : 0;
             int length = index + 300 < l ? 300 : l - i;
             User[] users = usersListAccess.load(index, length);
             for (User user : users) {
+              if(user.getUserName().equals(lastExisting)){
+                break ;
+              }
               if (!activatedUsers.contains(user.getUserName())) {
                 syncUser(user.getUserName(), eventType);
                 j++;
