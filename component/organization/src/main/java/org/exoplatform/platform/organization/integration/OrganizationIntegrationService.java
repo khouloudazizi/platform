@@ -505,13 +505,15 @@ public class OrganizationIntegrationService implements Startable {
           }
           ListAccess<User> usersListAccess = organizationService.getUserHandler().findAllUsers();
           int usersListAccessSize = usersListAccess.getSize();
-          int i = usersListAccessSize-300;
-          int j= 0;
+          int l = usersListAccessSize;
+          int i = 0;
+          int j = 0;
           int numberOfNotSynchronizedUsers = usersListAccessSize - activatedUsers.size();
           outerloop:
-          while (i > 0) {
-            int length = i + 300 < usersListAccessSize ? 300 : usersListAccessSize - i;
-            User[] users = usersListAccess.load(i, length);
+          while (i > usersListAccessSize) {
+            int index = l - 300 > 0 ? l-300 : 0;
+            int length = index + 300 < l ? 300 : l - i;
+            User[] users = usersListAccess.load(index, length);
             for (User user : users) {
               if (!activatedUsers.contains(user.getUserName())) {
                 syncUser(user.getUserName(), eventType);
@@ -521,7 +523,8 @@ public class OrganizationIntegrationService implements Startable {
                 }
               }
             }
-            i -= 300;
+            i += 300;
+            l -= 300;
           }
         } catch (Exception e) {
           LOG.error("\tUnknown error occurred while preparing to proceed user update", e);
