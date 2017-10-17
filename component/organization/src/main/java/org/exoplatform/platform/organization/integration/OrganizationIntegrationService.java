@@ -55,6 +55,7 @@ import java.util.*;
 @RESTEndpoint(path = "orgsync")
 public class OrganizationIntegrationService implements Startable {
 
+  private static final int PAGINATION_LENGTH = 300;
   private static final Log LOG = ExoLogger.getLogger(OrganizationIntegrationService.class);
   private static final Comparator<org.exoplatform.container.xml.ComponentPlugin> COMPONENT_PLUGIN_COMPARATOR = new Comparator<org.exoplatform.container.xml.ComponentPlugin>() {
     public int compare(org.exoplatform.container.xml.ComponentPlugin o1, org.exoplatform.container.xml.ComponentPlugin o2) {
@@ -450,13 +451,13 @@ public class OrganizationIntegrationService implements Startable {
 
           ListAccess<User> usersListAccess = organizationService.getUserHandler().findAllUsers();
 
-          int i = 0;
+          int counter = 0;
           int usersListAccessSize = usersListAccess.getSize();
           String lastExisting = "";
           outerloop:
-          while (i < usersListAccess.getSize()) {
-            int length = i + 300 < usersListAccessSize ? 300 : usersListAccessSize - i;
-            User[] users = usersListAccess.load(i, length);
+          while (counter < usersListAccess.getSize()) {
+            int length = counter + PAGINATION_LENGTH < usersListAccessSize ? PAGINATION_LENGTH : usersListAccessSize - counter;
+            User[] users = usersListAccess.load(counter, length);
             for (User user : users) {
               if(user.getUserName().equals(lastExisting)){
                 break outerloop;
@@ -464,7 +465,7 @@ public class OrganizationIntegrationService implements Startable {
               lastExisting = user.getUserName();
               activatedUsers.remove(user.getUserName());
             }
-            i += 300;
+            counter += PAGINATION_LENGTH;
           }
           for (String username : activatedUsers) {
             syncUser(username, eventType);
@@ -511,15 +512,15 @@ public class OrganizationIntegrationService implements Startable {
           }
           ListAccess<User> usersListAccess = organizationService.getUserHandler().findAllUsers();
           int usersListAccessSize = usersListAccess.getSize();
-          int l = usersListAccessSize;
-          int i = 0;
-          int j = 0;
-          int numberOfNotSynchronizedUsers = usersListAccessSize - activatedUsers.size();
+          int offsetUsersList = usersListAccessSize;
+          int counter = 0;
+          int numberOfSynchronizedUsers = 0;
+          int numberOfUsersToSynchronize = usersListAccessSize - activatedUsers.size();
           String lastExisting = "";
           outerloop:
-          while (i > usersListAccessSize) {
-            int index = l - 300 > 0 ? l-300 : 0;
-            int length = index + 300 < l ? 300 : l - i;
+          while (counter > usersListAccessSize) {
+            int index = offsetUsersList - PAGINATION_LENGTH > 0 ? offsetUsersList-PAGINATION_LENGTH : 0;
+            int length = index + PAGINATION_LENGTH < offsetUsersList ? PAGINATION_LENGTH : offsetUsersList - counter;
             User[] users = usersListAccess.load(index, length);
             for (User user : users) {
               if(user.getUserName().equals(lastExisting)){
@@ -527,14 +528,14 @@ public class OrganizationIntegrationService implements Startable {
               }
               if (!activatedUsers.contains(user.getUserName())) {
                 syncUser(user.getUserName(), eventType);
-                j++;
-                if(j == numberOfNotSynchronizedUsers){
+                numberOfSynchronizedUsers++;
+                if(numberOfSynchronizedUsers == numberOfUsersToSynchronize){
                   break outerloop;
                 }
               }
             }
-            i += 300;
-            l -= 300;
+            counter += PAGINATION_LENGTH;
+            offsetUsersList -= PAGINATION_LENGTH;
           }
         } catch (Exception e) {
           LOG.error("\tUnknown error occurred while preparing to proceed user update", e);
