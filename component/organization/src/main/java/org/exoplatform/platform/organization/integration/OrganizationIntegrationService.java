@@ -55,7 +55,7 @@ import java.util.*;
 @RESTEndpoint(path = "orgsync")
 public class OrganizationIntegrationService implements Startable {
 
-  private static final int PAGINATION_LENGTH = 300;
+  private static final int PAGINATION_LENGTH = 1000;
   private static final Log LOG = ExoLogger.getLogger(OrganizationIntegrationService.class);
   private static final Comparator<org.exoplatform.container.xml.ComponentPlugin> COMPONENT_PLUGIN_COMPARATOR = new Comparator<org.exoplatform.container.xml.ComponentPlugin>() {
     public int compare(org.exoplatform.container.xml.ComponentPlugin o1, org.exoplatform.container.xml.ComponentPlugin o2) {
@@ -459,6 +459,10 @@ public class OrganizationIntegrationService implements Startable {
             int length = counter + PAGINATION_LENGTH < usersListAccessSize ? PAGINATION_LENGTH : usersListAccessSize - counter;
             User[] users = usersListAccess.load(counter, length);
             for (User user : users) {
+              /*
+                * workaround to fix the problem of user's duplication (EXOGTN-2284) it should be removed once this Jira is fixed:
+                * break the loop if the list of duplicated users begins
+              */
               if(user.getUserName().equals(lastExisting)){
                 break outerloop;
               }
@@ -515,22 +519,42 @@ public class OrganizationIntegrationService implements Startable {
           int offsetUsersList = usersListAccessSize;
           int counter = 0;
           int numberOfSynchronizedUsers = 0;
-          int numberOfUsersToSynchronize = usersListAccessSize - activatedUsers.size();
+          int maxNumberOfUsersToSynchronize = usersListAccessSize - activatedUsers.size();
           String lastExisting = "";
           outerloop:
-          while (counter > usersListAccessSize) {
-            int index = offsetUsersList - PAGINATION_LENGTH > 0 ? offsetUsersList-PAGINATION_LENGTH : 0;
-            int length = index + PAGINATION_LENGTH < offsetUsersList ? PAGINATION_LENGTH : offsetUsersList - counter;
+          while (counter < usersListAccessSize) {   //
+            int index = offsetUsersList - PAGINATION_LENGTH > 0 ? offsetUsersList - PAGINATION_LENGTH : 0;
+            int length = offsetUsersList - index;
             User[] users = usersListAccess.load(index, length);
-            for (User user : users) {
-              if(user.getUserName().equals(lastExisting)){
-                break ;
-              }
-              if (!activatedUsers.contains(user.getUserName())) {
-                syncUser(user.getUserName(), eventType);
-                numberOfSynchronizedUsers++;
-                if(numberOfSynchronizedUsers == numberOfUsersToSynchronize){
-                  break outerloop;
+
+            if (!isAllElementsNull(users)) {
+              interloop:
+              for (int i = users.length - 1; i >= 0; i--) {
+                User useri = users[i];
+              /*
+                * workaround to fix the problem of user's duplication (EXOGTN-2284) it should be removed once this Jira is fixed:
+                * break the loop if the list of duplicated users begins
+               */
+                if (useri.getUserName().equals(lastExisting)) {
+
+                  for (int j = 0; j < users.length; j++) {
+                    User userj = users[j];
+                    if (userj.getUserName().equals(lastExisting)) {
+                      break interloop;
+                    }
+                    checkUserToSync(activatedUsers, userj, eventType, numberOfSynchronizedUsers);
+                    if (numberOfSynchronizedUsers == maxNumberOfUsersToSynchronize) {
+                      LOG.info("All new users are synchronized : break the synchronization [eventType = ADDED] ");
+                      break outerloop;
+                    }
+                  }
+                } else {
+                  checkUserToSync(activatedUsers, useri, eventType, numberOfSynchronizedUsers);
+                  lastExisting = useri.getUserName();
+                  if (numberOfSynchronizedUsers == maxNumberOfUsersToSynchronize) {
+                    LOG.info("All new users are synchronized : break the synchronization with [eventType ADDED] ");
+                    break outerloop;
+                  }
                 }
               }
             }
@@ -1285,4 +1309,16 @@ public class OrganizationIntegrationService implements Startable {
     }
   }
 
+  private void checkUserToSync (List<String> activatedUsers, User user, String eventType, int numberOfSynchronizedUsers){
+    if (!activatedUsers.contains(user.getUserName())) {
+      syncUser(user.getUserName(), eventType);
+      numberOfSynchronizedUsers++;
+    }
+  }
+
+  private boolean isAllElementsNull(User[] users){
+    List<User> userList = Arrays.asList(users);
+    boolean allEqual = userList.stream().distinct().limit(2).count() <= 1 ;
+    return allEqual && users[0]==null;
+  }
 }
