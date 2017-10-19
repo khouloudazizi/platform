@@ -41,6 +41,7 @@ import org.picocontainer.Startable;
 
 import javax.jcr.Session;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * This Service create Organization Model profiles, for User and Groups not
@@ -542,14 +543,16 @@ public class OrganizationIntegrationService implements Startable {
                     if (userj.getUserName().equals(lastExisting)) {
                       break interloop;
                     }
-                    checkUserToSync(activatedUsers, userj, eventType, numberOfSynchronizedUsers);
+                    checkUserToSync(activatedUsers, userj, eventType);
+                    numberOfSynchronizedUsers++;
                     if (numberOfSynchronizedUsers == maxNumberOfUsersToSynchronize) {
                       LOG.info("All new users are synchronized : break the synchronization [eventType = ADDED] ");
                       break outerloop;
                     }
                   }
                 } else {
-                  checkUserToSync(activatedUsers, useri, eventType, numberOfSynchronizedUsers);
+                  checkUserToSync(activatedUsers, useri, eventType);
+                  numberOfSynchronizedUsers++;
                   lastExisting = useri.getUserName();
                   if (numberOfSynchronizedUsers == maxNumberOfUsersToSynchronize) {
                     LOG.info("All new users are synchronized : break the synchronization with [eventType ADDED] ");
@@ -1309,16 +1312,18 @@ public class OrganizationIntegrationService implements Startable {
     }
   }
 
-  private void checkUserToSync (List<String> activatedUsers, User user, String eventType, int numberOfSynchronizedUsers){
+  private void checkUserToSync (List<String> activatedUsers, User user, String eventType){
     if (!activatedUsers.contains(user.getUserName())) {
       syncUser(user.getUserName(), eventType);
-      numberOfSynchronizedUsers++;
     }
   }
 
   private boolean isAllElementsNull(User[] users){
-    List<User> userList = Arrays.asList(users);
-    boolean allEqual = userList.stream().distinct().limit(2).count() <= 1 ;
+    /*
+     * workaround to fix the problem of user's duplication (EXOGTN-2284) it should be removed once this Jira is fixed
+     * please refer also to EXOGTN-2288
+     */
+    boolean allEqual = Stream.of(users).distinct().limit(2).count() <= 1 ;
     return allEqual && users[0]==null;
   }
 }
