@@ -460,10 +460,9 @@ public class OrganizationIntegrationService implements Startable {
             int length = counter + PAGINATION_LENGTH < usersListAccessSize ? PAGINATION_LENGTH : usersListAccessSize - counter;
             User[] users = usersListAccess.load(counter, length);
             for (User user : users) {
-              /*
-                * workaround to fix the problem of user's duplication (EXOGTN-2284) it should be removed once this Jira is fixed:
-                * break the loop if the list of duplicated users begins
-              */
+              // Workaround to fix the problem of user's duplication (EXOGTN-2284) it should be removed once this Jira is fixed.
+              // If we encounter a user in the list that is duplicated with their predecessor.
+              // Then until the end of the list it is only this user who will repeat ==> so we break the loop.
               if(user.getUserName().equals(lastExisting)){
                 break outerloop;
               }
@@ -532,10 +531,7 @@ public class OrganizationIntegrationService implements Startable {
               interloop:
               for (int i = users.length - 1; i >= 0; i--) {
                 User useri = users[i];
-              /*
-                * workaround to fix the problem of user's duplication (EXOGTN-2284) it should be removed once this Jira is fixed:
-                * break the loop if the list of duplicated users begins
-               */
+                // We will apply the same workaround as in the case DELETED
                 if (useri.getUserName().equals(lastExisting)) {
 
                   for (int j = 0; j < users.length; j++) {
@@ -1319,10 +1315,10 @@ public class OrganizationIntegrationService implements Startable {
   }
 
   private boolean isAllElementsNull(User[] users){
-    /*
-     * workaround to fix the problem of user's duplication (EXOGTN-2284) it should be removed once this Jira is fixed
-     * please refer also to EXOGTN-2288
-     */
+     //Workaround to fix the problem of user's duplication (EXOGTN-2284/EXOGTN-2288) it should be removed once this Jira is fixed
+     //In the case that the index is greater than the number of real users in ldap:
+     //The method userListAccess. load () will return a list of null users, which will cause a Null pointer exception
+     // => Then we should check that all users are not null using this function
     boolean allEqual = Stream.of(users).distinct().limit(2).count() <= 1 ;
     return allEqual && users[0]==null;
   }
