@@ -17,6 +17,7 @@
 package org.exoplatform.platform.organization.integration;
 
 import org.exoplatform.commons.utils.ListAccess;
+import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.component.ComponentPlugin;
 import org.exoplatform.container.component.ComponentRequestLifecycle;
@@ -33,16 +34,26 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.*;
 import org.exoplatform.services.organization.idm.PicketLinkIDMCacheService;
+import org.exoplatform.services.organization.idm.PicketLinkIDMService;
 import org.exoplatform.services.organization.impl.GroupImpl;
 import org.exoplatform.services.organization.impl.MembershipImpl;
 import org.exoplatform.services.organization.impl.UserImpl;
 import org.exoplatform.services.organization.impl.UserProfileImpl;
+import org.gatein.portal.idm.impl.repository.ExoFallbackIdentityStoreRepository;
+import org.picketlink.idm.api.IdentitySearchCriteria;
+import org.picketlink.idm.api.SortOrder;
+import org.picketlink.idm.impl.api.IdentitySearchCriteriaImpl;
+import org.picketlink.idm.impl.api.session.IdentitySessionImpl;
+import org.picketlink.idm.spi.model.IdentityObject;
+import org.picketlink.idm.spi.model.IdentityObjectType;
+import org.picketlink.idm.spi.search.IdentityObjectSearchCriteria;
+import org.picketlink.idm.spi.store.IdentityStore;
+import org.picketlink.idm.spi.store.IdentityStoreInvocationContext;
 import org.picocontainer.Startable;
 
 import javax.jcr.Session;
 import java.util.*;
-import java.util.stream.Stream;
-
+import java.util.stream.Collectors;
 /**
  * This Service create Organization Model profiles, for User and Groups not
  * created via eXo OrganizationService.
@@ -57,6 +68,8 @@ import java.util.stream.Stream;
 public class OrganizationIntegrationService implements Startable {
 
   private static final int PAGINATION_LENGTH = 1000;
+  private static final String LDAP_STORE_ID = "PortalLDAPStore";
+  private static final String HIBERNATE_STORE_ID  = "HibernateStore";
   private static final Log LOG = ExoLogger.getLogger(OrganizationIntegrationService.class);
   private static final Comparator<org.exoplatform.container.xml.ComponentPlugin> COMPONENT_PLUGIN_COMPARATOR = new Comparator<org.exoplatform.container.xml.ComponentPlugin>() {
     public int compare(org.exoplatform.container.xml.ComponentPlugin o1, org.exoplatform.container.xml.ComponentPlugin o2) {
@@ -437,138 +450,36 @@ public class OrganizationIntegrationService implements Startable {
       LOG.debug("All users listeners invocation, eventType = " + eventType);
     }
 
-    EventType event = EventType.valueOf(eventType);
+
     Session session = null;
-    picketLinkIDMCacheService.invalidateAll();
-    switch (event) {
-      case DELETED: {
-        if (LOG.isDebugEnabled()) {
-          LOG.debug("\tSearch for deleted users and invoke related listeners.");
+    try {
+      PicketLinkIDMService idmService = ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(PicketLinkIDMService.class);
+      ExoFallbackIdentityStoreRepository idmRepo = (ExoFallbackIdentityStoreRepository) ((IdentitySessionImpl)idmService.getIdentitySession()).getSessionContext().getIdentityStoreRepository();
+      IdentityStoreInvocationContext identityStoresInvocationContext = ((IdentitySessionImpl) idmService.getIdentitySession()).getSessionContext().resolveStoreInvocationContext();
+      IdentityObjectType identityObjectType = new IdentityObjectType() {
+        @Override
+        public String getName() {
+          return "USER";
         }
-        startRequest();
-        try {
-          session = repositoryService.getCurrentRepository().getSystemSession(Util.WORKSPACE);
-          List<String> activatedUsers = Util.getActivatedUsers(session);
-
-          ListAccess<User> usersListAccess = organizationService.getUserHandler().findAllUsers();
-
-          int counter = 0;
-          int usersListAccessSize = usersListAccess.getSize();
-          String lastExisting = "";
-          outerloop:
-          while (counter < usersListAccess.getSize()) {
-            int length = counter + PAGINATION_LENGTH < usersListAccessSize ? PAGINATION_LENGTH : usersListAccessSize - counter;
-            User[] users = usersListAccess.load(counter, length);
-            for (User user : users) {
-              // Workaround to fix the problem of user's duplication (EXOGTN-2284) it should be removed once this Jira is fixed.
-              // If we encounter a user in the list that is duplicated with their predecessor.
-              // Then until the end of the list it is only this user who will repeat ==> so we break the loop.
-              if(user.getUserName().equals(lastExisting)){
-                break outerloop;
-              }
-              lastExisting = user.getUserName();
-              activatedUsers.remove(user.getUserName());
-            }
-            counter += PAGINATION_LENGTH;
-          }
-          for (String username : activatedUsers) {
-            syncUser(username, eventType);
-          }
-        } catch (Exception e) {
-          LOG.error("\t\tUnknown error occurred while preparing to proceed users deletion", e);
-        } finally {
-          endRequest();
-          if (session != null) {
-            session.logout();
-          }
-        }
-        break;
+      };
+      List<IdentityStore> identityStores = idmRepo.getIdentityStores(identityObjectType);
+      int indexOfLdapStore = getIndexOfLdapStore(identityStores);
+      picketLinkIDMCacheService.invalidateAll();
+      startRequest();
+      session = repositoryService.getCurrentRepository().getSystemSession(Util.WORKSPACE);
+      List<String> activatedUsers = Util.getActivatedUsers(session);
+      if (indexOfLdapStore>=0) {
+        synAllUsersOfIdentityStore(eventType,identityStores,indexOfLdapStore,activatedUsers,idmRepo,idmService,identityObjectType,identityStoresInvocationContext);
+      } else {
+        ListAccess<User> usersListAccess = organizationService.getUserHandler().findAllUsers();
+        synAllUsersAnyConf(eventType, activatedUsers, usersListAccess);
       }
-      case UPDATED: {
-        if (LOG.isDebugEnabled()) {
-          LOG.debug("\tAll users update invocation: Search for already existing users in Datasource and that are already integrated.");
-        }
-        startRequest();
-        try {
-          session = repositoryService.getCurrentRepository().getSystemSession(Util.WORKSPACE);
-          List<String> activatedUsers = Util.getActivatedUsers(session);
-          for (String username : activatedUsers) {
-            syncUser(username, eventType);
-          }
-        } catch (Exception e) {
-          LOG.error("\tUnknown error occurred while preparing to proceed user update", e);
-        } finally {
-          endRequest();
-          if (session != null) {
-            session.logout();
-          }
-        }
-        break;
-      }
-      case ADDED: {
-        startRequest();
-        try {
-          session = repositoryService.getCurrentRepository().getSystemSession(Util.WORKSPACE);
-          List<String> activatedUsers = Util.getActivatedUsers(session);
-
-          if (LOG.isDebugEnabled()) {
-            LOG.debug("\tAll new users intagration: Search for already existing users in Datasource but not integrated yet.");
-          }
-          ListAccess<User> usersListAccess = organizationService.getUserHandler().findAllUsers();
-          int usersListAccessSize = usersListAccess.getSize();
-          int offsetUsersList = usersListAccessSize;
-          int counter = 0;
-          int numberOfSynchronizedUsers = 0;
-          int maxNumberOfUsersToSynchronize = usersListAccessSize - activatedUsers.size();
-          String lastExisting = "";
-          outerloop:
-          while (counter < usersListAccessSize) {   //
-            int index = offsetUsersList - PAGINATION_LENGTH > 0 ? offsetUsersList - PAGINATION_LENGTH : 0;
-            int length = offsetUsersList - index;
-            User[] users = usersListAccess.load(index, length);
-
-            if (!isAllElementsNull(users)) {
-              interloop:
-              for (int i = users.length - 1; i >= 0; i--) {
-                User useri = users[i];
-                // We will apply the same workaround as in the case DELETED
-                if (useri.getUserName().equals(lastExisting)) {
-
-                  for (int j = 0; j < users.length; j++) {
-                    User userj = users[j];
-                    if (userj.getUserName().equals(lastExisting)) {
-                      break interloop;
-                    }
-                    checkUserToSync(activatedUsers, userj, eventType);
-                    numberOfSynchronizedUsers++;
-                    if (numberOfSynchronizedUsers == maxNumberOfUsersToSynchronize) {
-                      LOG.info("All new users are synchronized : break the synchronization [eventType = ADDED] ");
-                      break outerloop;
-                    }
-                  }
-                } else {
-                  checkUserToSync(activatedUsers, useri, eventType);
-                  numberOfSynchronizedUsers++;
-                  lastExisting = useri.getUserName();
-                  if (numberOfSynchronizedUsers == maxNumberOfUsersToSynchronize) {
-                    LOG.info("All new users are synchronized : break the synchronization with [eventType ADDED] ");
-                    break outerloop;
-                  }
-                }
-              }
-            }
-            counter += PAGINATION_LENGTH;
-            offsetUsersList -= PAGINATION_LENGTH;
-          }
-        } catch (Exception e) {
-          LOG.error("\tUnknown error occurred while preparing to proceed user update", e);
-        } finally {
-          endRequest();
-          if (session != null) {
-            session.logout();
-          }
-        }
-        break;
+    } catch (Exception e){
+         LOG.error("Error when trying to synchronize all users", e);
+    } finally {
+      endRequest();
+      if (session != null) {
+        session.logout();
       }
     }
   }
@@ -1308,18 +1219,205 @@ public class OrganizationIntegrationService implements Startable {
     }
   }
 
-  private void checkUserToSync (List<String> activatedUsers, User user, String eventType){
-    if (!activatedUsers.contains(user.getUserName())) {
-      syncUser(user.getUserName(), eventType);
+  private List<String> getIdentityStoreUsers(int index, int length, IdentityStore identityStore, IdentityStoreInvocationContext identityStoreInvocationContext, IdentityObjectType identityObjectType, ExoFallbackIdentityStoreRepository idmRepo) throws Exception{
+    IdentitySearchCriteriaImpl searchCriteria = new IdentitySearchCriteriaImpl();
+
+    searchCriteria.page(index,length);
+    searchCriteria.sort(SortOrder.ASCENDING);
+    Collection<IdentityObject> usersCollection = identityStore.findIdentityObject(identityStoreInvocationContext, identityObjectType, convertSearchControls(searchCriteria));;
+    if(identityStore.getId().equals(HIBERNATE_STORE_ID)){
+      usersCollection =  usersCollection.stream().filter(IdentityObject -> {
+        try {
+          return isFirstlyCreatedIn(idmRepo, identityStoreInvocationContext, identityStore, IdentityObject);
+        } catch (Exception e) {
+          LOG.error("Error when trying to load users from store "+identityStore.getId(),e);
+        }
+        return false;
+      }).collect(Collectors.toList());
+    }
+    return usersCollection.stream().map(IdentityObject::getName).collect(Collectors.toList());
+  }
+
+  private int getIdentityStoreSize(IdentityStore identityStore, ExoFallbackIdentityStoreRepository exoFallbackIdentityStoreRepository, PicketLinkIDMService picketLinkIDMService, IdentityObjectType identityObjectType) throws Exception{
+    IdentityStoreInvocationContext identityStoresInvocationContext = ((IdentitySessionImpl) picketLinkIDMService.getIdentitySession()).getSessionContext().resolveStoreInvocationContext();
+    IdentityStoreInvocationContext identityStoreInvocationContext = exoFallbackIdentityStoreRepository.getTargetIdentityStoreInvocationContext(identityStore, identityStoresInvocationContext);
+    return  identityStore.getIdentityObjectsCount(identityStoreInvocationContext,identityObjectType);
+  }
+
+  private int getIndexOfLdapStore(List<IdentityStore> identityStores){
+    if (identityStores.size()!=2){
+      return -1;
+    }
+    int countLdapStores = 0;
+    int countHibernateStores = 0 ;
+    for (IdentityStore identityStore : identityStores){
+      if(identityStore.getId().equals(LDAP_STORE_ID)){
+        countLdapStores++;
+      } else if(identityStore.getId().equals(HIBERNATE_STORE_ID)){
+        countHibernateStores++;
+      }
+    }
+    if (countLdapStores != 1 || countHibernateStores!=1){
+      return -1;
+    }
+    if(identityStores.get(0).getId().equals(LDAP_STORE_ID)){
+      return 0;
+    }
+    return 1;
+  }
+
+  private void synAllUsersOfIdentityStore(String eventType, List<IdentityStore> identityStores,int indexOfLdapStore ,List<String> activatedUsers, ExoFallbackIdentityStoreRepository idmRepo, PicketLinkIDMService idmService, IdentityObjectType identityObjectType, IdentityStoreInvocationContext identityStoresInvocationContext) throws Exception{
+    EventType event = EventType.valueOf(eventType);
+    IdentityStore identityStore = identityStores.get(indexOfLdapStore);
+    IdentityStoreInvocationContext identityStoreInvocationContext = idmRepo.getTargetIdentityStoreInvocationContext(identityStore, identityStoresInvocationContext);
+
+    int usersSize = getIdentityStoreSize(identityStore, idmRepo, idmService, identityObjectType);
+
+    switch (event) {
+      case DELETED:{
+       if (LOG.isDebugEnabled()) {
+          LOG.debug("\tSearch for deleted users and invoke related listeners.");
+        }
+        int pointer = 0;
+        List<String> copyOfActivatedUsers = activatedUsers;
+        while (pointer < usersSize) {
+          int length = pointer + PAGINATION_LENGTH < usersSize ? PAGINATION_LENGTH : usersSize - pointer;
+          List<String> ldapUsers = getIdentityStoreUsers(pointer,length,identityStore,identityStoreInvocationContext,identityObjectType,idmRepo);
+          copyOfActivatedUsers.removeAll(ldapUsers);
+          pointer += PAGINATION_LENGTH;
+        }
+        pointer = 0;
+        IdentityStore hibernateIdentityStore = identityStores.get(indexOfLdapStore==0?1:0);
+        int hibernateUsersSize = getIdentityStoreSize(hibernateIdentityStore,idmRepo,idmService,identityObjectType);
+        IdentityStoreInvocationContext hibernateStoreInvocationContext = idmRepo.getTargetIdentityStoreInvocationContext(hibernateIdentityStore, identityStoresInvocationContext);
+        while(pointer < hibernateUsersSize){
+          int length = pointer + PAGINATION_LENGTH < usersSize ? PAGINATION_LENGTH : usersSize - pointer;
+          List<String> hibernateUsers = getIdentityStoreUsers(pointer,length, hibernateIdentityStore ,hibernateStoreInvocationContext, identityObjectType,idmRepo);
+          copyOfActivatedUsers.removeAll(hibernateUsers);
+          if(hibernateUsers.size() < length){
+            break;
+          }
+          pointer += PAGINATION_LENGTH;
+        }
+        for (String username : copyOfActivatedUsers) {
+          syncUser(username, eventType);
+        }
+        break;
+      }
+      case UPDATED:{
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("\tAll users update invocation: Search for already existing users in Datasource and that are already integrated.");
+        }
+        for (String username : activatedUsers) {
+          syncUser(username, eventType);
+        }
+        break;
+      }
+      case ADDED: {
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("\tAll users update invocation: Search for already existing users in Datasource and that are already integrated.");
+        }
+        int pointer = 0;
+        while (pointer < usersSize) {
+          int length = pointer + PAGINATION_LENGTH < usersSize ? PAGINATION_LENGTH : usersSize - pointer;
+          List<String> users = getIdentityStoreUsers(pointer, length, identityStore, identityStoreInvocationContext, identityObjectType,idmRepo);
+          users.removeAll(activatedUsers);
+          for(String user : users){
+            syncUser(user, eventType);
+          }
+          pointer += PAGINATION_LENGTH;
+        }
+        break;
+      }
     }
   }
 
-  private boolean isAllElementsNull(User[] users){
-     //Workaround to fix the problem of user's duplication (EXOGTN-2284/EXOGTN-2288) it should be removed once this Jira is fixed
-     //In the case that the index is greater than the number of real users in ldap:
-     //The method userListAccess. load () will return a list of null users, which will cause a Null pointer exception
-     // => Then we should check that all users are not null using this function
-    boolean allEqual = Stream.of(users).distinct().limit(2).count() <= 1 ;
-    return allEqual && users[0]==null;
+  private void synAllUsersAnyConf(String eventType, List<String> activatedUsers, ListAccess<User> usersListAccess) throws Exception {
+    EventType event = EventType.valueOf(eventType);
+    switch (event) {
+      case DELETED: {
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("\tSearch for deleted users and invoke related listeners.");
+        }
+        int pointer = 0;
+        int usersListAccessSize = usersListAccess.getSize();
+        String lastExisting = "";
+        outerloop:
+        while (pointer < usersListAccessSize) {
+          int length = pointer + PAGINATION_LENGTH < usersListAccessSize ? PAGINATION_LENGTH : usersListAccessSize - pointer;
+          User[] users = usersListAccess.load(pointer, length);
+          for (User user : users) {
+            // Workaround to fix the problem of user's duplication (EXOGTN-2284) it should be removed once this Jira is fixed.
+            // If we encounter a user in the list that is duplicated with their predecessor.
+            // Then until the end of the list it is only this user who will repeat ==> so we break the loop.
+            if (user.getUserName().equals(lastExisting)) {
+              break outerloop;
+            }
+            lastExisting = user.getUserName();
+            activatedUsers.remove(user.getUserName());
+          }
+          pointer += PAGINATION_LENGTH;
+        }
+        for (String username : activatedUsers) {
+          syncUser(username, eventType);
+        }
+        break;
+      }
+      case UPDATED: {
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("\tAll users update invocation: Search for already existing users in Datasource and that are already integrated.");
+        }
+          for (String username : activatedUsers) {
+            syncUser(username, eventType);
+          }
+        break;
+      }
+      case ADDED: {
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("\tAll new users intagration: Search for already existing users in Datasource but not integrated yet.");
+        }
+        int usersListAccessSize = usersListAccess.getSize();
+        int pointer = 0;
+        String lastExisting="";
+        outerloop:
+        while (pointer <= usersListAccessSize) {
+          int length = pointer + PAGINATION_LENGTH <= usersListAccessSize ? PAGINATION_LENGTH : usersListAccessSize - pointer;
+          User[] users = usersListAccess.load(pointer, length);
+          for (User user : users) {
+            // We will apply the same workaround as in the case DELETED
+            if(lastExisting.equals(user.getUserName())){
+              break outerloop;
+            }
+            if (!activatedUsers.contains(user.getUserName())) {
+              syncUser(user.getUserName(), eventType);
+            }
+            lastExisting = user.getUserName();
+          }
+          pointer += PAGINATION_LENGTH;
+        }
+        break;
+      }
+    }
+  }
+
+  private IdentityObjectSearchCriteria convertSearchControls(IdentitySearchCriteria criteria)
+  {
+    if (criteria == null)
+    {
+      return null;
+    }
+
+    if (criteria instanceof IdentityObjectSearchCriteria)
+    {
+      return (IdentityObjectSearchCriteria)criteria;
+    }
+    else
+    {
+      throw new IllegalArgumentException("Not supported IdentitySearchCriteria implementation: " + criteria.getClass());
+    }
+  }
+
+  private boolean isFirstlyCreatedIn(ExoFallbackIdentityStoreRepository idmRepo, IdentityStoreInvocationContext identityStoreInvocationContext, IdentityStore identityStore, IdentityObject identityObject) throws Exception{
+    return idmRepo.isFirstlyCreatedIn(identityStoreInvocationContext,identityStore,identityObject);
   }
 }
