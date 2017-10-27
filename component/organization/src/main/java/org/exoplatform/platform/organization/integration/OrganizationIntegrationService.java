@@ -40,10 +40,12 @@ import org.exoplatform.services.organization.impl.MembershipImpl;
 import org.exoplatform.services.organization.impl.UserImpl;
 import org.exoplatform.services.organization.impl.UserProfileImpl;
 import org.gatein.portal.idm.impl.repository.ExoFallbackIdentityStoreRepository;
+import org.gatein.portal.idm.impl.store.hibernate.ExoHibernateIdentityStoreImpl;
 import org.picketlink.idm.api.IdentitySearchCriteria;
 import org.picketlink.idm.api.SortOrder;
 import org.picketlink.idm.impl.api.IdentitySearchCriteriaImpl;
 import org.picketlink.idm.impl.api.session.IdentitySessionImpl;
+import org.picketlink.idm.impl.store.ldap.ExoLDAPIdentityStoreImpl;
 import org.picketlink.idm.spi.model.IdentityObject;
 import org.picketlink.idm.spi.model.IdentityObjectType;
 import org.picketlink.idm.spi.search.IdentityObjectSearchCriteria;
@@ -68,8 +70,6 @@ import java.util.stream.Collectors;
 public class OrganizationIntegrationService implements Startable {
 
   private static final int PAGINATION_LENGTH = 1000;
-  private static final String LDAP_STORE_ID = "PortalLDAPStore";
-  private static final String HIBERNATE_STORE_ID  = "HibernateStore";
   private static final Log LOG = ExoLogger.getLogger(OrganizationIntegrationService.class);
   private static final Comparator<org.exoplatform.container.xml.ComponentPlugin> COMPONENT_PLUGIN_COMPARATOR = new Comparator<org.exoplatform.container.xml.ComponentPlugin>() {
     public int compare(org.exoplatform.container.xml.ComponentPlugin o1, org.exoplatform.container.xml.ComponentPlugin o2) {
@@ -463,13 +463,12 @@ public class OrganizationIntegrationService implements Startable {
         }
       };
       List<IdentityStore> identityStores = idmRepo.getIdentityStores(identityObjectType);
-      int indexOfLdapStore = getIndexOfLdapStore(identityStores);
       picketLinkIDMCacheService.invalidateAll();
       startRequest();
       session = repositoryService.getCurrentRepository().getSystemSession(Util.WORKSPACE);
       List<String> activatedUsers = Util.getActivatedUsers(session);
-      if (indexOfLdapStore>=0) {
-        synAllUsersOfIdentityStore(eventType,identityStores,indexOfLdapStore,activatedUsers,idmRepo,idmService,identityObjectType,identityStoresInvocationContext);
+      if (isDefaultConf(identityStores)) {
+        synAllUsersDefaultConf(eventType, identityStores, activatedUsers, idmRepo, idmService, identityObjectType, identityStoresInvocationContext);
       } else {
         ListAccess<User> usersListAccess = organizationService.getUserHandler().findAllUsers();
         synAllUsersAnyConf(eventType, activatedUsers, usersListAccess);
@@ -1225,7 +1224,7 @@ public class OrganizationIntegrationService implements Startable {
     searchCriteria.page(index,length);
     searchCriteria.sort(SortOrder.ASCENDING);
     Collection<IdentityObject> usersCollection = identityStore.findIdentityObject(identityStoreInvocationContext, identityObjectType, convertSearchControls(searchCriteria));;
-    if(identityStore.getId().equals(HIBERNATE_STORE_ID)){
+    if(identityStore instanceof ExoHibernateIdentityStoreImpl){
       usersCollection =  usersCollection.stream().filter(IdentityObject -> {
         try {
           return isFirstlyCreatedIn(idmRepo, identityStoreInvocationContext, identityStore, IdentityObject);
@@ -1244,50 +1243,47 @@ public class OrganizationIntegrationService implements Startable {
     return  identityStore.getIdentityObjectsCount(identityStoreInvocationContext,identityObjectType);
   }
 
-  private int getIndexOfLdapStore(List<IdentityStore> identityStores){
-    if (identityStores.size()!=2){
-      return -1;
+  private IdentityStore getIdentityStore(List<IdentityStore> identityStores, boolean isLdapStore){
+    if(isLdapStore){
+      return identityStores.stream().filter(identityStore -> identityStore instanceof ExoLDAPIdentityStoreImpl).collect(Collectors.toList()).get(0);
     }
-    int countLdapStores = 0;
-    int countHibernateStores = 0 ;
-    for (IdentityStore identityStore : identityStores){
-      if(identityStore.getId().equals(LDAP_STORE_ID)){
-        countLdapStores++;
-      } else if(identityStore.getId().equals(HIBERNATE_STORE_ID)){
-        countHibernateStores++;
-      }
-    }
-    if (countLdapStores != 1 || countHibernateStores!=1){
-      return -1;
-    }
-    if(identityStores.get(0).getId().equals(LDAP_STORE_ID)){
-      return 0;
-    }
-    return 1;
+    return identityStores.stream().filter(identityStore -> identityStore instanceof ExoHibernateIdentityStoreImpl).collect(Collectors.toList()).get(0);
   }
 
-  private void synAllUsersOfIdentityStore(String eventType, List<IdentityStore> identityStores,int indexOfLdapStore ,List<String> activatedUsers, ExoFallbackIdentityStoreRepository idmRepo, PicketLinkIDMService idmService, IdentityObjectType identityObjectType, IdentityStoreInvocationContext identityStoresInvocationContext) throws Exception{
-    EventType event = EventType.valueOf(eventType);
-    IdentityStore identityStore = identityStores.get(indexOfLdapStore);
-    IdentityStoreInvocationContext identityStoreInvocationContext = idmRepo.getTargetIdentityStoreInvocationContext(identityStore, identityStoresInvocationContext);
+  boolean isDefaultConf(List<IdentityStore> identityStores){
+    if (identityStores.size()!=2){
+      return false;
+    }
+    long ldapStoreCount = identityStores.stream().filter(identityStore -> identityStore instanceof ExoLDAPIdentityStoreImpl).count();
+    long hibernateStoreCount = identityStores.stream().filter(identityStore -> identityStore instanceof ExoHibernateIdentityStoreImpl).count();
+    if(ldapStoreCount !=1 || hibernateStoreCount !=1){
+      return false;
+    }
+    return true;
+  }
 
-    int usersSize = getIdentityStoreSize(identityStore, idmRepo, idmService, identityObjectType);
+  private void synAllUsersDefaultConf(String eventType, List<IdentityStore> identityStores, List<String> activatedUsers, ExoFallbackIdentityStoreRepository idmRepo, PicketLinkIDMService idmService, IdentityObjectType identityObjectType, IdentityStoreInvocationContext identityStoresInvocationContext) throws Exception{
+    EventType event = EventType.valueOf(eventType);
 
     switch (event) {
       case DELETED:{
        if (LOG.isDebugEnabled()) {
           LOG.debug("\tSearch for deleted users and invoke related listeners.");
         }
+        IdentityStore ldapIdentityStore = getIdentityStore(identityStores, true);
+        IdentityStoreInvocationContext identityStoreInvocationContext = idmRepo.getTargetIdentityStoreInvocationContext(ldapIdentityStore, identityStoresInvocationContext);
+
+        int usersSize = getIdentityStoreSize(ldapIdentityStore, idmRepo, idmService, identityObjectType);
         int pointer = 0;
         List<String> copyOfActivatedUsers = activatedUsers;
         while (pointer < usersSize) {
           int length = pointer + PAGINATION_LENGTH < usersSize ? PAGINATION_LENGTH : usersSize - pointer;
-          List<String> ldapUsers = getIdentityStoreUsers(pointer,length,identityStore,identityStoreInvocationContext,identityObjectType,idmRepo);
+          List<String> ldapUsers = getIdentityStoreUsers(pointer,length,ldapIdentityStore,identityStoreInvocationContext,identityObjectType,idmRepo);
           copyOfActivatedUsers.removeAll(ldapUsers);
           pointer += PAGINATION_LENGTH;
         }
         pointer = 0;
-        IdentityStore hibernateIdentityStore = identityStores.get(indexOfLdapStore==0?1:0);
+        IdentityStore hibernateIdentityStore = getIdentityStore(identityStores, false);
         int hibernateUsersSize = getIdentityStoreSize(hibernateIdentityStore,idmRepo,idmService,identityObjectType);
         IdentityStoreInvocationContext hibernateStoreInvocationContext = idmRepo.getTargetIdentityStoreInvocationContext(hibernateIdentityStore, identityStoresInvocationContext);
         while(pointer < hibernateUsersSize){
@@ -1317,10 +1313,14 @@ public class OrganizationIntegrationService implements Startable {
         if (LOG.isDebugEnabled()) {
           LOG.debug("\tAll users update invocation: Search for already existing users in Datasource and that are already integrated.");
         }
+        IdentityStore ldapIdentityStore = getIdentityStore(identityStores, true);
+        IdentityStoreInvocationContext identityStoreInvocationContext = idmRepo.getTargetIdentityStoreInvocationContext(ldapIdentityStore, identityStoresInvocationContext);
+
+        int usersSize = getIdentityStoreSize(ldapIdentityStore, idmRepo, idmService, identityObjectType);
         int pointer = 0;
         while (pointer < usersSize) {
           int length = pointer + PAGINATION_LENGTH < usersSize ? PAGINATION_LENGTH : usersSize - pointer;
-          List<String> users = getIdentityStoreUsers(pointer, length, identityStore, identityStoreInvocationContext, identityObjectType,idmRepo);
+          List<String> users = getIdentityStoreUsers(pointer, length, ldapIdentityStore, identityStoreInvocationContext, identityObjectType,idmRepo);
           users.removeAll(activatedUsers);
           for(String user : users){
             syncUser(user, eventType);
