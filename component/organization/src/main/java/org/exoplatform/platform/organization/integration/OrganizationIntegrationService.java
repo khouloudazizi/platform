@@ -44,6 +44,7 @@ import org.gatein.portal.idm.impl.store.hibernate.ExoHibernateIdentityStoreImpl;
 import org.picketlink.idm.impl.api.session.IdentitySessionImpl;
 import org.picketlink.idm.impl.store.ldap.ExoLDAPIdentityStoreImpl;
 import org.picketlink.idm.spi.model.IdentityObjectType;
+import org.picketlink.idm.spi.repository.IdentityStoreRepository;
 import org.picketlink.idm.spi.store.IdentityStore;
 import org.picketlink.idm.spi.store.IdentityStoreInvocationContext;
 import org.picocontainer.Startable;
@@ -104,6 +105,9 @@ public class OrganizationIntegrationService implements Startable {
   private PicketLinkIDMCacheService picketLinkIDMCacheService;
   private PicketLinkIDMService picketLinkIDMService;
   private ExoFallbackIdentityStoreRepository exoFallbackISRepository;
+  private IdentityStore ldapIdentityStore ;
+  private IdentityStore hibernateIdentityStore;
+  private IdentityStoreInvocationContext identityStoresInvocationContext;
 
 
   public OrganizationIntegrationService(OrganizationService organizationService, RepositoryService repositoryService,
@@ -185,16 +189,29 @@ public class OrganizationIntegrationService implements Startable {
       // check the picketLinkIDM configuration if the client use the default configuration => use the picketLink Api to load users => better perf
       picketLinkIDMService = ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(PicketLinkIDMService.class);
       if(picketLinkIDMService == null){
-        LOG.warn("Cannot retrieve the picketLink IDM Service (PicketLinkIDMService == null) ==> we will use the generic synchronization method");
+        LOG.debug("We will use the generic synchronization method as this server don't use the default configuration picketLinkIDM");
         isDefaultConf = false;
       } else {
-        exoFallbackISRepository = (ExoFallbackIdentityStoreRepository) ((IdentitySessionImpl)picketLinkIDMService.getIdentitySession()).getSessionContext().getIdentityStoreRepository();
-        if(exoFallbackISRepository == null){
-          LOG.warn("Cannot retrieve Exo Fallback IdentityStore Repository (ExoFallbackIdentityStoreRepository == null) ==> we will use the generic synchronization method");
+        IdentityStoreRepository identityStoreRepository =  ((IdentitySessionImpl)picketLinkIDMService.getIdentitySession()).getSessionContext().getIdentityStoreRepository();
+        //test on getClass().getName() instead of instanceof to be sure that it's not a super class that inherits from ExoFallbackIdentityStoreRepository
+        boolean equals = identityStoreRepository.getClass().getName() == ExoFallbackIdentityStoreRepository.class.getName();
+        if(identityStoreRepository == null || !equals){
+          LOG.debug("We will use the generic synchronization method as this server don't use the default configuration picketLinkIDM");
           isDefaultConf = false;
         } else {
+          exoFallbackISRepository = (ExoFallbackIdentityStoreRepository)identityStoreRepository;
           List<IdentityStore> identityStores = exoFallbackISRepository.getIdentityStores(PLIDM_USER_IDENTITY_TYPE);
-          isDefaultConf = isDefaultConf(identityStores);
+          identityStoresInvocationContext = ((IdentitySessionImpl) picketLinkIDMService.getIdentitySession()).getSessionContext().resolveStoreInvocationContext();
+          if(identityStoresInvocationContext == null){
+            LOG.debug("We will use the generic synchronization method as this server don't use the default configuration picketLinkIDM");
+            isDefaultConf = false;
+          } else {
+            isDefaultConf = isDefaultConf(identityStores);
+            if(isDefaultConf) {
+              ldapIdentityStore = getIdentityStoreByType(identityStores, ExoLDAPIdentityStoreImpl.class);
+              hibernateIdentityStore = getIdentityStoreByType(identityStores, ExoHibernateIdentityStoreImpl.class);
+            }
+          }
         }
       }
       session = repositoryService.getCurrentRepository().getSystemSession(Util.WORKSPACE);
@@ -468,141 +485,29 @@ public class OrganizationIntegrationService implements Startable {
   @ManagedDescription("invoke all users listeners")
   @Impact(ImpactType.READ)
   public void syncAllUsers(@ManagedDescription("Event type: added/updated/deleted") @ManagedName("eventType") String eventType) {
-    EventType event = EventType.valueOf(eventType);
+
     if (LOG.isDebugEnabled()) {
       LOG.debug("All users listeners invocation, eventType = " + eventType);
     }
+
+    EventType event = EventType.valueOf(eventType);
     Session session = null;
     startRequest();
     try {
       session = repositoryService.getCurrentRepository().getSystemSession(Util.WORKSPACE);
       List<String> activatedUsers = Util.getActivatedUsers(session);
-      if(event.equals(EventType.UPDATED)){
-        if (LOG.isDebugEnabled()) {
-          LOG.debug("\tAll users update invocation: Search for already existing users in Datasource and that are already integrated.");
-        }
-        for (String username : activatedUsers) {
-          syncUser(username, eventType);
-        }
-        endRequest();
-        session.logout();
-        return;
-      }
-      picketLinkIDMCacheService.invalidateAll();
-      ListAccess<String>  ldapUserNamesListAccess = null;
-      ListAccess<String>  hibernateUsersNamesListAccess = null;
-      ListAccess<User>   usersListAccess = null;
-      int userListAccessSize = 0;
-      boolean skip = false;
-      if(isDefaultConf){
-        List<IdentityStore> identityStores = exoFallbackISRepository.getIdentityStores(PLIDM_USER_IDENTITY_TYPE);
-        IdentityStoreInvocationContext identityStoresInvocationContext = ((IdentitySessionImpl) picketLinkIDMService.getIdentitySession()).getSessionContext().resolveStoreInvocationContext();
-        if(identityStoresInvocationContext == null){
-          LOG.warn("Cannot retrieve the IdentityStore Invocation Context(IdentityStoreInvocationContext == null) ==> we will use the generic synchronization method");
-          skip = true;
-        } else {
-           IdentityStore ldapIdentityStore = getIdentityStoreByType(identityStores, ExoLDAPIdentityStoreImpl.class);
-           IdentityStore hibernateIdentityStore = getIdentityStoreByType(identityStores, ExoHibernateIdentityStoreImpl.class);
-           IdentityStoreInvocationContext ldapIVC = exoFallbackISRepository.getTargetIdentityStoreInvocationContext(ldapIdentityStore, identityStoresInvocationContext);
-           IdentityStoreInvocationContext hibernateIVC = exoFallbackISRepository.getTargetIdentityStoreInvocationContext(hibernateIdentityStore, identityStoresInvocationContext);
-
-          if(ldapIVC == null || hibernateIVC == null){
-             LOG.warn("Cannot retrieve the IdentityStore Invocation Context for Ldap Or Hibernate Store (IdentityStoreInvocationContext == null) ==> we will use the generic synchronization method");
-             skip = true;
-           } else {
-             ldapUserNamesListAccess = new IdentityStoreUserListAccess(exoFallbackISRepository, ldapIdentityStore, PLIDM_USER_IDENTITY_TYPE, ldapIVC);
-             hibernateUsersNamesListAccess = new IdentityStoreUserListAccess(exoFallbackISRepository, hibernateIdentityStore, PLIDM_USER_IDENTITY_TYPE, hibernateIVC);
-             userListAccessSize = ldapUserNamesListAccess.getSize();
-
-           }
-        }
-      } else if(!isDefaultConf || skip){
-         usersListAccess = organizationService.getUserHandler().findAllUsers();
-         userListAccessSize = usersListAccess.getSize();
-      }
-
       switch (event) {
-        case DELETED: {
-          if (LOG.isDebugEnabled()) {
-            LOG.debug("\tSearch for deleted users and invoke related listeners.");
-          }
-          int pointer = 0;
-          String lastExisting = "";
-          List<String> copyOfActivatedUsers = activatedUsers;
-          while (pointer < userListAccessSize) {
-            int length = pointer + PAGINATION_LENGTH < userListAccessSize ? PAGINATION_LENGTH : userListAccessSize - pointer;
-            List<String> users;
-            if (isDefaultConf){
-              String[] userArray  = ldapUserNamesListAccess.load(pointer, length);
-              users = Arrays.asList(userArray);
-            } else {
-              User[] usersList =usersListAccess.load(pointer, length);
-              users = Stream.of(usersList).map(User::getUserName).collect(Collectors.toList());
-            }
-            pointer += PAGINATION_LENGTH;
-            if(users.size()==0){
-              break; // here we go ! 
-            }
-            // Workaround to fix the problem of user's duplication (EXOGTN-2284) it should be removed once this Jira is fixed.
-            // If we encounter a user in the list that is duplicated with their predecessor.
-            // Then until the end of the list it is only this user who will repeat ==> so we break the loop.
-            if(lastExisting.equals(users.get(0))){
-              break ;
-            }
-            copyOfActivatedUsers.removeAll(users);
-            lastExisting = users.get(users.size()-1);
-          }
-          if(isDefaultConf){
-            pointer = 0;
-            int hibernateUserListAccessSize = hibernateUsersNamesListAccess.getSize();
-            while (pointer < hibernateUserListAccessSize) {
-              int length = pointer + PAGINATION_LENGTH < hibernateUserListAccessSize ? PAGINATION_LENGTH : hibernateUserListAccessSize - pointer;
-              List<String> users;
-              String[] userArray  = hibernateUsersNamesListAccess.load(pointer, length);
-              users = Arrays.asList(userArray);
-              copyOfActivatedUsers.removeAll(users);
-              if(users.size() < length){
-                break;
-              }
-              pointer += PAGINATION_LENGTH;
-            }
-          }
-
-          for (String username : copyOfActivatedUsers) {
-            syncUser(username, eventType);
-          }
+        case ADDED:
+        case DELETED:{
+          syncAllUsers(eventType,activatedUsers);
           break;
         }
-        case ADDED: {
+        case UPDATED:{
           if (LOG.isDebugEnabled()) {
-            LOG.debug("\tAll new users intagration: Search for already existing users in Datasource but not integrated yet.");
+            LOG.debug("\tAll users update invocation: Search for already existing users in Datasource and that are already integrated.");
           }
-          int pointer = 0;
-          String lastExisting="";
-          while (pointer <= userListAccessSize) {
-            int length = pointer + PAGINATION_LENGTH <= userListAccessSize ? PAGINATION_LENGTH : userListAccessSize - pointer;
-            List<String> users;
-            if (isDefaultConf){
-              String[] userArray  = ldapUserNamesListAccess.load(pointer, length);
-              users = new ArrayList<String>(Arrays.asList(userArray));
-            } else {
-              User[] usersList =usersListAccess.load(pointer, length);
-              users = Stream.of(usersList).map(User::getUserName).collect(Collectors.toList());
-            }
-            pointer += PAGINATION_LENGTH;
-            // We will apply the same workaround as in the case DELETED
-            if(users.get(0).equals(lastExisting)){
-              break ;
-            }
-            users.removeAll(activatedUsers);
-            if(users.size()>0) {
-              lastExisting = users.get(users.size() - 1);
-            } else {
-              continue;
-            }
-            for(String user : users){
-              syncUser(user,eventType);
-            }
+          for (String username : activatedUsers) {
+            syncUser(username, eventType);
           }
           break;
         }
@@ -1367,4 +1272,88 @@ public class OrganizationIntegrationService implements Startable {
     }
     return true;
   }
+
+  private void syncAllUsers(String eventType, List<String> activatedUsers) throws Exception{
+    boolean added = eventType.equals(EventType.ADDED.name()) ? true : false;
+    picketLinkIDMCacheService.invalidateAll();
+    ListAccess<String>  ldapUserNamesListAccess = null;
+    ListAccess<String>  hibernateUsersNamesListAccess = null;
+    ListAccess<User>   usersListAccess = null;
+    int userListAccessSize = 0;
+    boolean skip = false;
+    if(isDefaultConf){
+      IdentityStoreInvocationContext ldapIVC = exoFallbackISRepository.getTargetIdentityStoreInvocationContext(ldapIdentityStore, identityStoresInvocationContext);
+      IdentityStoreInvocationContext hibernateIVC = exoFallbackISRepository.getTargetIdentityStoreInvocationContext(hibernateIdentityStore, identityStoresInvocationContext);
+      if(ldapIVC == null || hibernateIVC == null){
+        LOG.debug("We will use the generic synchronization method as this server don't use the default configuration picketLinkIDM");
+        skip = true;
+      } else {
+        ldapUserNamesListAccess = new IdentityStoreUserListAccess(exoFallbackISRepository, ldapIdentityStore, PLIDM_USER_IDENTITY_TYPE, ldapIVC);
+        hibernateUsersNamesListAccess = new IdentityStoreUserListAccess(exoFallbackISRepository, hibernateIdentityStore, PLIDM_USER_IDENTITY_TYPE, hibernateIVC);
+        userListAccessSize = ldapUserNamesListAccess.getSize();
+
+      }
+    }
+
+    if(!isDefaultConf || skip){
+      usersListAccess = organizationService.getUserHandler().findAllUsers();
+      userListAccessSize = usersListAccess.getSize();
+    }
+
+    if(added){
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("\tAll new users intagration: Search for already existing users in Datasource but not integrated yet.");
+      }
+    } else {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("\tSearch for deleted users and invoke related listeners.");
+      }
+    }
+
+    int index = 0;
+    List<String> users = null;
+    String[] userArray = null;
+    User[] usersList;
+    while (index <= userListAccessSize) {
+      int length = index + PAGINATION_LENGTH <= userListAccessSize ? PAGINATION_LENGTH : userListAccessSize - index;
+      if (isDefaultConf){
+        userArray  = ldapUserNamesListAccess.load(index, length);
+        users = new ArrayList<String>(Arrays.asList(userArray));
+      } else {
+        usersList =usersListAccess.load(index, length);
+        users = Stream.of(usersList).map(User::getUserName).collect(Collectors.toList());
+      }
+      index += PAGINATION_LENGTH;
+
+      if(added) {
+        users.removeAll(activatedUsers);
+        for(String user : users){
+          syncUser(user,eventType);
+        }
+      } else {
+        activatedUsers.removeAll(users);
+      }
+    }
+
+    if(isDefaultConf && !added){
+      index = 0;
+      int length;
+      int hibernateUserListAccessSize = hibernateUsersNamesListAccess.getSize();
+      while (index < hibernateUserListAccessSize) {
+        length = index + PAGINATION_LENGTH < hibernateUserListAccessSize ? PAGINATION_LENGTH : hibernateUserListAccessSize - index;
+        userArray = hibernateUsersNamesListAccess.load(index, length);
+        users = Arrays.asList(userArray);
+        activatedUsers.removeAll(users);
+        index += PAGINATION_LENGTH;
+      }
+    }
+
+    if(!added){
+      for(String user : activatedUsers){
+        syncUser(user,eventType);
+      }
+    }
+
+  }
+
 }

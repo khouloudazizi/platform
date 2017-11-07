@@ -22,10 +22,7 @@ import java.util.stream.Collectors;
 public class IdentityStoreUserListAccess implements ListAccess<String>, Serializable {
 
     private static final Log LOG = ExoLogger.getLogger(IdentityStoreUserListAccess.class);
-
-    ExoFallbackIdentityStoreRepository exoFallbackISRepository;
-
-
+    private final ExoFallbackIdentityStoreRepository exoFallbackISRepository ;
     private IdentityStore identityStore ;
     private IdentityObjectType identityObjectType;
     private IdentityStoreInvocationContext identityStoreInvocationContext;
@@ -38,10 +35,10 @@ public class IdentityStoreUserListAccess implements ListAccess<String>, Serializ
     }
 
     @Override
-    public String[] load(int i, int i1) throws Exception {
+    public String[] load(int index, int length) throws Exception {
         IdentitySearchCriteriaImpl searchCriteria = new IdentitySearchCriteriaImpl();
 
-        searchCriteria.page(i,i1);
+        searchCriteria.page(index,length);
         searchCriteria.sort(SortOrder.ASCENDING);
         Collection<IdentityObject> usersCollection = identityStore.findIdentityObject(identityStoreInvocationContext, identityObjectType, convertSearchControls(searchCriteria));;
         if(identityStore.getClass().getName().equals(ExoHibernateIdentityStoreImpl.class.getName())){
@@ -56,7 +53,7 @@ public class IdentityStoreUserListAccess implements ListAccess<String>, Serializ
         }
         List<String> usersList = usersCollection.stream().map(IdentityObject::getName).collect(Collectors.toList());
 
-        return  usersList.toArray(new String[i1]);
+        return  usersList.toArray(new String[length]);
     }
 
     @Override
