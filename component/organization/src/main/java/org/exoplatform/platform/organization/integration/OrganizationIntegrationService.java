@@ -1356,4 +1356,9 @@ public class OrganizationIntegrationService implements Startable {
 
   }
 
+  // Needed for unit test
+  public RepositoryService getRepositoryService() {
+    return repositoryService;
+  }
+
 }

@@ -16,22 +16,18 @@
  */
 package org.exoplatform.platform.organization.injector;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.util.zip.ZipOutputStream;
-
-import org.exoplatform.management.annotations.Impact;
-import org.exoplatform.management.annotations.ImpactType;
-import org.exoplatform.management.annotations.Managed;
-import org.exoplatform.management.annotations.ManagedDescription;
-import org.exoplatform.management.annotations.ManagedName;
+import org.exoplatform.management.annotations.*;
 import org.exoplatform.management.jmx.annotations.NameTemplate;
 import org.exoplatform.management.jmx.annotations.Property;
 import org.exoplatform.management.rest.annotations.RESTEndpoint;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.picocontainer.Startable;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.zip.ZipOutputStream;
 
 @Managed
 @ManagedDescription("Platform Organization Data Injector Service")
@@ -73,7 +69,14 @@ public class JMXDataInjector implements Startable {
     ZipOutputStream zos = new ZipOutputStream(out);
 
     dataInjectorService.writeProfiles(zos);
-    dataInjectorService.writeUsers(zos);
+    try {
+      dataInjectorService.writeUsers(zos);
+    } catch (java.util.zip.ZipException e){
+      // because of user duplication (picketLink bug) an exception will be always  raised (duplicate entry).
+      // we need to continue the export of the data.
+      // no exception handling here as we no the bug
+      LOG.warn(e.getCause());
+    }
     dataInjectorService.writeOrganizationModelData(zos);
 
     zos.close();

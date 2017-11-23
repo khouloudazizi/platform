@@ -1,0 +1,65 @@
+dn: dc=example,dc=com
+objectclass: top
+objectclass: dcObject
+objectclass: organization
+o: example
+dc: example
+
+dn: dc=portal,dc=example,dc=com
+objectclass: top
+objectclass: dcObject
+objectclass: organization
+o: portal
+dc: portal
+
+dn: o=test,dc=portal,dc=example,dc=com
+objectclass: top
+objectclass: organization
+o: test
+
+dn: ou=People,o=test,dc=portal,dc=example,dc=com
+objectclass: top
+objectclass: organizationalUnit
+ou: People
+
+dn: uid=admin,ou=People,o=test,dc=portal,dc=example,dc=com
+objectclass: top
+objectclass: inetOrgPerson
+objectclass: person
+uid: admin
+cn: Java Duke
+sn: Duke
+userPassword: admin
+mail: email@email.com
+
+dn: uid=anoissi,ou=People,o=test,dc=portal,dc=example,dc=com
+objectclass: top
+objectclass: inetOrgPerson
+objectclass: person
+uid: anoissi
+cn: Abdessattar Noissi
+sn: Noissi
+userPassword: anoissi
+mail: anoissi@email.com
+
+dn: uid=dataUser1,ou=People,o=test,dc=portal,dc=example,dc=com
+objectclass: top
+objectclass: inetOrgPerson
+objectclass: person
+uid: dataUser1
+cn: dataUser1 dataUser1
+sn: dataUser1
+userPassword: dataUser1
+mail: anoissi@email.com
+
+
+dn: uid=dataUser2,ou=People,o=test,dc=portal,dc=example,dc=com
+objectclass: top
+objectclass: inetOrgPerson
+objectclass: person
+uid: dataUser2
+cn: dataUser2 dataUser2
+sn: dataUser2
+userPassword: dataUser2
+mail: anoissi@email.com
+

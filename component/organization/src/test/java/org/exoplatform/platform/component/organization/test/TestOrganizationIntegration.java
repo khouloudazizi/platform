@@ -1,5 +1,6 @@
 package org.exoplatform.platform.component.organization.test;
 
+import exo.portal.component.identiy.opendsconfig.opends.PlfOpenDSService;
 import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.component.ComponentRequestLifecycle;
@@ -40,18 +41,25 @@ public class TestOrganizationIntegration extends BasicTestCase {
   PortalContainer container = null;
   RepositoryService repositoryService = null;
   OrganizationService organizationService = null;
+  PlfOpenDSService plfOpenDSService = new PlfOpenDSService(null);
+  private OrganizationIntegrationService organizationIntegrationService;
 
   @Override
   protected void setUp() throws Exception {
-    container = PortalContainer.getInstance();
-    repositoryService = (RepositoryService) container.getComponentInstanceOfType(RepositoryService.class);
-    organizationService = (OrganizationService) container.getComponentInstanceOfType(OrganizationService.class);
+      plfOpenDSService.start();
+      plfOpenDSService.initLDAPServer();
+      container = PortalContainer.getInstance();
+      repositoryService = (RepositoryService) container.getComponentInstanceOfType(RepositoryService.class);
+      organizationService = (OrganizationService) container.getComponentInstanceOfType(OrganizationService.class);
+      organizationIntegrationService = (OrganizationIntegrationService) container.getComponentInstanceOfType(OrganizationIntegrationService.class);
   }
-
+    @Override
+    protected void tearDown() throws Exception {
+        plfOpenDSService.cleanUpDN("dc=example,dc=com");
+        plfOpenDSService.stop();
+    }
 
     public void testIntegrationService() throws Exception {
-        OrganizationIntegrationService organizationIntegrationService = container.createComponent(OrganizationIntegrationService.class);
-        container.registerComponentInstance(organizationIntegrationService);
         assertNotNull(organizationIntegrationService);
         NewUserListener userListener = container.createComponent(NewUserListener.class);
         assertNotNull(userListener);

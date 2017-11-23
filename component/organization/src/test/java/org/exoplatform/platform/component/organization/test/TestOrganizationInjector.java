@@ -1,36 +1,59 @@
 package org.exoplatform.platform.component.organization.test;
 
-import java.io.File;
-
+import exo.portal.component.identiy.opendsconfig.opends.PlfOpenDSService;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.platform.organization.injector.DataInjectorService;
 import org.exoplatform.platform.organization.injector.JMXDataInjector;
-import org.exoplatform.services.organization.Group;
-import org.exoplatform.services.organization.Membership;
-import org.exoplatform.services.organization.MembershipType;
-import org.exoplatform.services.organization.OrganizationService;
-import org.exoplatform.services.organization.User;
+import org.exoplatform.services.organization.*;
 import org.exoplatform.test.BasicTestCase;
 import org.picocontainer.Startable;
+
+import java.io.*;
 
 public class TestOrganizationInjector extends BasicTestCase {
   PortalContainer container = null;
   OrganizationService organizationService = null;
   JMXDataInjector dataInjector = null;
   DataInjectorService dataInjectorService = null;
+  private PlfOpenDSService plfOpenDSService = new PlfOpenDSService(null);
+  private MembershipHandler membershipHandler;
+
 
   @Override
   protected void setUp() throws Exception {
+    plfOpenDSService.start();
+    plfOpenDSService.initLDAPServer();
     container = PortalContainer.getInstance();
     organizationService = (OrganizationService) container.getComponentInstanceOfType(OrganizationService.class);
+    membershipHandler = organizationService.getMembershipHandler();
     dataInjector = (JMXDataInjector) container.getComponentInstanceOfType(JMXDataInjector.class);
     dataInjectorService = (DataInjectorService) container.getComponentInstanceOfType(DataInjectorService.class);
 
     ((Startable) organizationService).start();
   }
 
+  @Override
+  protected void tearDown() throws Exception {
+    deleteUser("dataUser1");
+    deleteUser("dataUser2");
+    plfOpenDSService.cleanUpDN("dc=example,dc=com");
+    plfOpenDSService.stop();
+  }
   public void testDataInjectorService() throws Exception {
+    User user1;
+    User user2;
+    MembershipType membershipType;
+    Membership membership;
+    Group group ;
+
+    user1 = getUser("dataUser1");
+    user2 = getUser("dataUser2");
+    membershipType = getMembershipType("dataMT");
+    group = getGroup("/dataGroup");
+
+    membershipHandler.linkMembership(user1,group,membershipType,true);
+    membershipHandler.linkMembership(user2,group,membershipType,true);
     File file = new File("target/test.zip");
     dataInjector.extractData(file.getAbsolutePath());
     deleteMembershipType("dataMT");
@@ -39,18 +62,18 @@ public class TestOrganizationInjector extends BasicTestCase {
     deleteUser("dataUser2");
     dataInjector.injectData(file.getAbsolutePath());
 
-    User user = getUser("dataUser1");
-    assertNotNull(user);
-    user = getUser("dataUser2");
-    assertNotNull(user);
+    user1 = getUser("dataUser1");
+    assertNotNull(user1);
+    user2 = getUser("dataUser2");
+    assertNotNull(user2);
 
-    Group group = getGroup("/dataGroup");
+    group = getGroup("/dataGroup");
     assertNotNull(group);
 
-    MembershipType membershipType = getMembershipType("dataMT");
+    membershipType = getMembershipType("dataMT");
     assertNotNull(membershipType);
 
-    Membership membership = getMembership("dataMT", "dataUser1", "/dataGroup");
+    membership = getMembership("dataMT", "dataUser1", "/dataGroup");
     assertNotNull(membership);
 
     membership = getMembership("dataMT", "dataUser2", "/dataGroup");

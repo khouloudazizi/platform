@@ -58,7 +58,6 @@
 		</init-params>
 	</component>
 	
-	<!--
     <external-component-plugins>
     <target-component>org.exoplatform.services.jcr.RepositoryService</target-component>
     <component-plugin>
@@ -74,8 +73,7 @@
       </init-params>
     </component-plugin>
   </external-component-plugins>
-  -->
-	
+
 	<import>classpath:/conf/portal/idm-configuration.xml</import>
 	<import>classpath:/conf/portal/organization-configuration.xml</import>
 	<import>classpath:/conf/jcr/test-jcr-configuration.xml</import>

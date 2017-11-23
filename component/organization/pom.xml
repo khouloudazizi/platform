@@ -9,6 +9,28 @@
   <artifactId>platform-component-organization</artifactId>
   <name>eXo PLF:: Platform - Organization Model Integration</name>
   <dependencies>
+    <dependency>
+      <groupId>org.exoplatform.gatein.portal</groupId>
+      <artifactId>exo.portal.component.test.core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.gatein.portal</groupId>
+      <artifactId>exo.portal.component.test.jcr</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>sun-opends</groupId>
+      <artifactId>OpenDS</artifactId>
+      <version>1.0.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>berkeleydb</groupId>
+      <artifactId>je</artifactId>
+      <version>3.2.76</version>
+      <scope>test</scope>
+    </dependency>
     <!-- To replace the old xstream:xstream version from picocontainer -->
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
@@ -125,6 +147,9 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <properties>
+    <surefire.exo.profiles>hsqldb</surefire.exo.profiles>
+  </properties>
   <build>
     <plugins>
       <plugin>
@@ -134,6 +159,21 @@
           <systemPropertyVariables>
             <exo.properties.url>classpath:/conf/configuration.properties</exo.properties.url>
           </systemPropertyVariables>
+          <systemProperties>
+            <property>
+              <name>exo.profiles</name>
+              <value>${surefire.exo.profiles}</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <fork>true</fork>
+          <meminitial>1024m</meminitial>
+          <maxmem>2024m</maxmem>
         </configuration>
       </plugin>
     </plugins>
