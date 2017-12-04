@@ -65,7 +65,7 @@ public class UINotificationPopoverToolbarPortlet extends UIPortletApplication {
   @Override
   public void processRender(WebuiApplication app, WebuiRequestContext context) throws Exception {
     this.currentUser = context.getRemoteUser();
-    if(currentUser != null) {
+    if(this.currentUser != null) {
       String currentUserId = getCurrentUserId();
       if(currentUserId != null) {
         this.maxItemsInPopover = NotificationMessageUtils.getMaxItemsInPopover();
@@ -94,7 +94,7 @@ public class UINotificationPopoverToolbarPortlet extends UIPortletApplication {
   public void serveResource(WebuiRequestContext context) throws Exception {
     super.serveResource(context);
     this.currentUser = context.getRemoteUser();
-    if (currentUser != null) {
+    if (this.currentUser != null) {
       String currentUserId = getCurrentUserId();
       if (currentUserId != null) {
         ResourceRequest req = context.getRequest();
