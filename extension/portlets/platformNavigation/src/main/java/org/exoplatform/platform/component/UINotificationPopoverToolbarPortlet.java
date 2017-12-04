@@ -132,11 +132,11 @@ public class UINotificationPopoverToolbarPortlet extends UIPortletApplication {
           ///
         } else {
           this.currentUser = "";
-          log.warn("Warning when execute the processRender() method for UINotificationPopoverToolbarPortlet class. The currentUserId is null");
+          log.warn("Warning when execute the serveResource() method for UINotificationPopoverToolbarPortlet class. The currentUserId is null");
         }
       } else {
         this.currentUser = "";
-        log.warn("Warning when execute the processRender() method for UINotificationPopoverToolbarPortlet class. The currentUser is null");
+        log.warn("Warning when execute the serveResource() method for UINotificationPopoverToolbarPortlet class. The currentUser is null");
       }
     }
   }
