@@ -512,12 +512,14 @@ public class OrganizationIntegrationService implements Startable {
           break;
         }
         case UPDATED:{
+          LOG.info("The synchronization is started for all LDAP users, eventType: UPDATED");
           if (LOG.isDebugEnabled()) {
             LOG.debug("\tAll users update invocation: Search for already existing users in Datasource and that are already integrated.");
           }
           for (String username : activatedUsers) {
             syncUser(username, eventType);
           }
+          LOG.info("The synchronization is finished for all LDAP users, eventType: UPDATED");
           break;
         }
       }
@@ -1311,16 +1313,19 @@ public class OrganizationIntegrationService implements Startable {
     }
 
     if(added){
+      LOG.info("The synchronization is started for all LDAP users, eventType: ADDED");
       if (LOG.isDebugEnabled()) {
         LOG.debug("\tAll new users intagration: Search for already existing users in Datasource but not integrated yet.");
       }
     } else {
+      LOG.info("The synchronization is started for all LDAP users, eventType: DELETED");
       if (LOG.isDebugEnabled()) {
         LOG.debug("\tSearch for deleted users and invoke related listeners.");
       }
     }
 
     int index = 0;
+    int numberOfCheckUsers = 0;
     List<String> users = null;
     String[] userArray = null;
     User[] usersList;
@@ -1335,13 +1340,16 @@ public class OrganizationIntegrationService implements Startable {
       }
       index += PAGINATION_LENGTH;
 
+      numberOfCheckUsers += length;
       if(added) {
         users.removeAll(activatedUsers);
+        LOG.info(numberOfCheckUsers+" users are checked for addition");
         for(String user : users){
           syncUser(user,eventType);
         }
       } else {
         activatedUsers.removeAll(users);
+        LOG.info(numberOfCheckUsers+" users are checked for deletion");
       }
     }
 
@@ -1353,7 +1361,9 @@ public class OrganizationIntegrationService implements Startable {
         length = index + PAGINATION_LENGTH < hibernateUserListAccessSize ? PAGINATION_LENGTH : hibernateUserListAccessSize - index;
         userArray = hibernateUsersNamesListAccess.load(index, length);
         users = Arrays.asList(userArray);
+        numberOfCheckUsers += length;
         activatedUsers.removeAll(users);
+        LOG.info(numberOfCheckUsers+" users are checked for deletion");
         index += PAGINATION_LENGTH;
       }
     }
@@ -1362,6 +1372,9 @@ public class OrganizationIntegrationService implements Startable {
       for(String user : activatedUsers){
         syncUser(user,eventType);
       }
+      LOG.info("The synchronization is finished for all LDAP users, eventType: DELETED");
+    } else {
+      LOG.info("The synchronization is finished for all LDAP users, eventType: ADDED");
     }
 
   }
