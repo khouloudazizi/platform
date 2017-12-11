@@ -209,7 +209,6 @@ public class OrganizationIntegrationService implements Startable {
       }
       session = repositoryService.getCurrentRepository().getSystemSession(Util.WORKSPACE);
       Util.init(session);
-
       if (synchronizeGroups) {
         // Search for Groups that aren't yet integrated
         syncAllGroups(EventType.ADDED.toString());
@@ -519,8 +518,8 @@ public class OrganizationIntegrationService implements Startable {
           for (String username : activatedUsers) {
             syncUser(username, eventType);
           }
+          break;
         }
-        break;
       }
     } catch (Exception e){
          LOG.error("Error when trying to synchronize all users", e);
