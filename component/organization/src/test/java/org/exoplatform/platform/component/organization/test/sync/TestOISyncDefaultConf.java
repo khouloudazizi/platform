@@ -1,7 +1,9 @@
 package org.exoplatform.platform.component.organization.test.sync;
 
 import exo.portal.component.identiy.opendsconfig.opends.PlfOpenDSService;
-import org.exoplatform.component.test.AbstractKernelTest;
+import org.exoplatform.component.test.ConfigurationUnit;
+import org.exoplatform.component.test.ConfiguredBy;
+import org.exoplatform.component.test.ContainerScope;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.platform.organization.integration.EventType;
 import org.exoplatform.platform.organization.integration.OrganizationIntegrationService;
@@ -11,8 +13,7 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.organization.User;
 import org.exoplatform.services.organization.UserHandler;
-import org.exoplatform.services.organization.idm.PicketLinkIDMService;
-import org.gatein.portal.idm.impl.repository.ExoFallbackIdentityStoreRepository;
+import org.exoplatform.test.BasicTestCase;
 
 import javax.jcr.Session;
 import java.util.List;
@@ -20,16 +21,15 @@ import java.util.List;
 /**
  * Created by Abdessattar Noissi on 13/11/17.
  */
-
-public class TestOISyncDefaultConf extends AbstractKernelTest {
+@ConfiguredBy({
+        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/portal/test-configuration.xml")})
+public class TestOISyncDefaultConf extends BasicTestCase {
 
     private static Log log = ExoLogger.getLogger(TestOISyncDefaultConf.class.getName());
 
     private PlfOpenDSService openDSService = new PlfOpenDSService(null);
     private PortalContainer container;
     private OrganizationService organization;
-    private PicketLinkIDMService picketLinkIDMService;
-    private ExoFallbackIdentityStoreRepository exoFallbackISRepository;
 
     private OrganizationIntegrationService organizationIntegrationService;
     private UserHandler uHandler;
@@ -38,8 +38,10 @@ public class TestOISyncDefaultConf extends AbstractKernelTest {
     private List<String> activatedUsers;
     private final String USER_CONTAINER = "ou=People,o=test,dc=portal,dc=example,dc=com";
 
+
     @Override
-    protected void beforeRunBare() {
+    protected void setUp() throws Exception {
+        super.setUp();
         try {
             openDSService.start();
             openDSService.initLDAPServer();
@@ -47,19 +49,12 @@ public class TestOISyncDefaultConf extends AbstractKernelTest {
         } catch (Exception e) {
             log.error("Error in starting up OPENDS", e);
         }
-        super.beforeRunBare();
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        begin();
-        container = getContainer();
+        container = PortalContainer.getInstance();
         organization = (OrganizationService) container.getComponentInstanceOfType(OrganizationService.class);
         uHandler = organization.getUserHandler();
         organizationIntegrationService = (OrganizationIntegrationService) container.getComponentInstanceOfType(OrganizationIntegrationService.class);
-        organizationIntegrationService.syncAllUsers(EventType.ADDED.name());
         session = organizationIntegrationService.getRepositoryService().getCurrentRepository().getSystemSession(Util.WORKSPACE);
+        organizationIntegrationService.syncAllUsers(EventType.ADDED.name());
     }
 
     @Override
@@ -68,17 +63,10 @@ public class TestOISyncDefaultConf extends AbstractKernelTest {
         deleteUser("admin");
         deleteUser("testAdd");
         openDSService.cleanUpDN("dc=example,dc=com");
-        organizationIntegrationService.stop();
 
         if (session != null) {
             session.logout();
         }
-        end();
-        super.tearDown();
-    }
-
-    @Override
-    protected void afterRunBare() {
         try {
             openDSService.cleanUpDN("dc=example,dc=com");
             openDSService.stop();
@@ -86,13 +74,12 @@ public class TestOISyncDefaultConf extends AbstractKernelTest {
         } catch (Exception e) {
             log.error("Error in stopping OPENDS", e);
         }
-        super.afterRunBare();
+        super.tearDown();
     }
 
 
 
     public void testAdded() throws Exception {
-
         activatedUsers = Util.getActivatedUsers(session);
         assertEquals(4, activatedUsers.size());
         openDSService.addUserAccount("testAdd",USER_CONTAINER);

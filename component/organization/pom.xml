@@ -167,15 +167,6 @@
           </systemProperties>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <fork>true</fork>
-          <meminitial>1024m</meminitial>
-          <maxmem>2024m</maxmem>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 </project>

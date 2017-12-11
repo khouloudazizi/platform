@@ -33,6 +33,7 @@ import org.exoplatform.services.jcr.RepositoryService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.*;
+import org.exoplatform.services.organization.idm.IdentityStoreUserListAccess;
 import org.exoplatform.services.organization.idm.PicketLinkIDMCacheService;
 import org.exoplatform.services.organization.idm.PicketLinkIDMService;
 import org.exoplatform.services.organization.impl.GroupImpl;
@@ -68,6 +69,7 @@ import java.util.stream.Stream;
 public class OrganizationIntegrationService implements Startable {
 
   private static final int PAGINATION_LENGTH = 1000;
+  // Check if the server use the default configuration of PicketLinkIdmService
   private static boolean isDefaultConf = false;
   private static final Log LOG = ExoLogger.getLogger(OrganizationIntegrationService.class);
   private static final Comparator<org.exoplatform.container.xml.ComponentPlugin> COMPONENT_PLUGIN_COMPARATOR = new Comparator<org.exoplatform.container.xml.ComponentPlugin>() {
@@ -188,24 +190,15 @@ public class OrganizationIntegrationService implements Startable {
     try {
       // check the picketLinkIDM configuration if the client use the default configuration => use the picketLink Api to load users => better perf
       picketLinkIDMService = ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(PicketLinkIDMService.class);
-      if(picketLinkIDMService == null){
-        LOG.debug("We will use the generic synchronization method as this server don't use the default configuration picketLinkIDM");
-        isDefaultConf = false;
-      } else {
+      if(picketLinkIDMService != null){
         IdentityStoreRepository identityStoreRepository =  ((IdentitySessionImpl)picketLinkIDMService.getIdentitySession()).getSessionContext().getIdentityStoreRepository();
         //test on getClass().getName() instead of instanceof to be sure that it's not a super class that inherits from ExoFallbackIdentityStoreRepository
         boolean equals = identityStoreRepository.getClass().getName() == ExoFallbackIdentityStoreRepository.class.getName();
-        if(identityStoreRepository == null || !equals){
-          LOG.debug("We will use the generic synchronization method as this server don't use the default configuration picketLinkIDM");
-          isDefaultConf = false;
-        } else {
+        if(identityStoreRepository != null && equals){
           exoFallbackISRepository = (ExoFallbackIdentityStoreRepository)identityStoreRepository;
           List<IdentityStore> identityStores = exoFallbackISRepository.getIdentityStores(PLIDM_USER_IDENTITY_TYPE);
           identityStoresInvocationContext = ((IdentitySessionImpl) picketLinkIDMService.getIdentitySession()).getSessionContext().resolveStoreInvocationContext();
-          if(identityStoresInvocationContext == null){
-            LOG.debug("We will use the generic synchronization method as this server don't use the default configuration picketLinkIDM");
-            isDefaultConf = false;
-          } else {
+          if(identityStoresInvocationContext != null){
             isDefaultConf = isDefaultConf(identityStores);
             if(isDefaultConf) {
               ldapIdentityStore = getIdentityStoreByType(identityStores, ExoLDAPIdentityStoreImpl.class);
@@ -1285,9 +1278,9 @@ public class OrganizationIntegrationService implements Startable {
       IdentityStoreInvocationContext ldapIVC = exoFallbackISRepository.getTargetIdentityStoreInvocationContext(ldapIdentityStore, identityStoresInvocationContext);
       IdentityStoreInvocationContext hibernateIVC = exoFallbackISRepository.getTargetIdentityStoreInvocationContext(hibernateIdentityStore, identityStoresInvocationContext);
       if(ldapIVC == null || hibernateIVC == null){
-        LOG.debug("We will use the generic synchronization method as this server don't use the default configuration picketLinkIDM");
         skip = true;
       } else {
+        LOG.info("The server use the configuration of picketLinkIdmService => use the  api picketLink to load users => better perf");
         ldapUserNamesListAccess = new IdentityStoreUserListAccess(exoFallbackISRepository, ldapIdentityStore, PLIDM_USER_IDENTITY_TYPE, ldapIVC);
         hibernateUsersNamesListAccess = new IdentityStoreUserListAccess(exoFallbackISRepository, hibernateIdentityStore, PLIDM_USER_IDENTITY_TYPE, hibernateIVC);
         userListAccessSize = ldapUserNamesListAccess.getSize();
@@ -1296,6 +1289,7 @@ public class OrganizationIntegrationService implements Startable {
     }
 
     if(!isDefaultConf || skip){
+      LOG.debug("We will use the generic synchronization method as this server don't use the default configuration picketLinkIDMService");
       usersListAccess = organizationService.getUserHandler().findAllUsers();
       userListAccessSize = usersListAccess.getSize();
     }
