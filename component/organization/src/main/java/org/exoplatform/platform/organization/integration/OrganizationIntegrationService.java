@@ -1287,8 +1287,8 @@ public class OrganizationIntegrationService implements Startable {
   private void syncAllUsers(String eventType, List<String> activatedUsers) throws Exception{
     boolean added = eventType.equals(EventType.ADDED.name()) ? true : false;
     picketLinkIDMCacheService.invalidateAll();
-    ListAccess<String>  ldapUserNamesListAccess = null;
-    ListAccess<String>  hibernateUsersNamesListAccess = null;
+    ListAccess<User>  ldapUserNamesListAccess = null;
+    ListAccess<User>  hibernateUsersNamesListAccess = null;
     ListAccess<User>   usersListAccess = null;
     int userListAccessSize = 0;
     boolean skip = false;
@@ -1327,16 +1327,13 @@ public class OrganizationIntegrationService implements Startable {
     int index = 0;
     int numberOfCheckUsers = 0;
     List<String> users = null;
-    String[] userArray = null;
-    User[] usersList;
     while (index <= userListAccessSize) {
       int length = index + PAGINATION_LENGTH <= userListAccessSize ? PAGINATION_LENGTH : userListAccessSize - index;
       if (isDefaultConf){
-        userArray  = ldapUserNamesListAccess.load(index, length);
-        users = new ArrayList<String>(Arrays.asList(userArray));
+        users = Arrays.stream(ldapUserNamesListAccess.load(index, length)).map(User::getUserName).collect(Collectors.toList());
       } else {
-        usersList =usersListAccess.load(index, length);
-        users = Stream.of(usersList).map(User::getUserName).collect(Collectors.toList());
+        users = Arrays.stream(usersListAccess.load(index, length)).map(User::getUserName).collect(Collectors.toList());
+
       }
       index += PAGINATION_LENGTH;
 
@@ -1359,8 +1356,7 @@ public class OrganizationIntegrationService implements Startable {
       int hibernateUserListAccessSize = hibernateUsersNamesListAccess.getSize();
       while (index < hibernateUserListAccessSize) {
         length = index + PAGINATION_LENGTH < hibernateUserListAccessSize ? PAGINATION_LENGTH : hibernateUserListAccessSize - index;
-        userArray = hibernateUsersNamesListAccess.load(index, length);
-        users = Arrays.asList(userArray);
+        users =  Arrays.stream(hibernateUsersNamesListAccess.load(index, length)).map(User::getUserName).collect(Collectors.toList());
         numberOfCheckUsers += length;
         activatedUsers.removeAll(users);
         LOG.info(numberOfCheckUsers+" users are checked for deletion");
