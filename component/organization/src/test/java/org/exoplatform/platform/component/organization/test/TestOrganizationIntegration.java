@@ -1,6 +1,6 @@
 package org.exoplatform.platform.component.organization.test;
 
-import exo.portal.component.identiy.opendsconfig.opends.PlfOpenDSService;
+import exo.portal.component.identiy.opendsconfig.opends.OpenDSService;
 import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.component.ComponentRequestLifecycle;
@@ -41,7 +41,7 @@ public class TestOrganizationIntegration extends BasicTestCase {
   PortalContainer container = null;
   RepositoryService repositoryService = null;
   OrganizationService organizationService = null;
-  PlfOpenDSService plfOpenDSService = new PlfOpenDSService(null);
+  OpenDSService plfOpenDSService = new OpenDSService(null);
   private OrganizationIntegrationService organizationIntegrationService;
 
   @Override

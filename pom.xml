@@ -60,6 +60,9 @@
 
     <org.apache.shindig.version>2.5.2</org.apache.shindig.version>
     <org.gatein.common.version>2.2.2.Final</org.gatein.common.version>
+
+    <sun-opends.version>1.0.0</sun-opends.version>
+    <berkeleydb.version>3.2.76</berkeleydb.version>
   </properties>
   <dependencyManagement>
     <!-- ### NEVER CHANGE THIS ORDER OF DEPMGT ### -->
@@ -753,6 +756,17 @@
         <groupId>org.gatein.web</groupId>
         <artifactId>redirect</artifactId>
         <version>${org.exoplatform.gatein.portal.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>sun-opends</groupId>
+        <artifactId>OpenDS</artifactId>
+        <version>${sun-opends.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>berkeleydb</groupId>
+        <artifactId>je</artifactId>
+        <version>${berkeleydb.version}</version>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>

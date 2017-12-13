@@ -1,6 +1,6 @@
 package org.exoplatform.platform.component.organization.test;
 
-import exo.portal.component.identiy.opendsconfig.opends.PlfOpenDSService;
+import exo.portal.component.identiy.opendsconfig.opends.OpenDSService;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.platform.organization.injector.DataInjectorService;
@@ -16,7 +16,7 @@ public class TestOrganizationInjector extends BasicTestCase {
   OrganizationService organizationService = null;
   JMXDataInjector dataInjector = null;
   DataInjectorService dataInjectorService = null;
-  private PlfOpenDSService plfOpenDSService = new PlfOpenDSService(null);
+  private OpenDSService plfOpenDSService = new OpenDSService(null);
   private MembershipHandler membershipHandler;
 
 

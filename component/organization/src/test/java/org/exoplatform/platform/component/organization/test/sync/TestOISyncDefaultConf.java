@@ -1,6 +1,6 @@
 package org.exoplatform.platform.component.organization.test.sync;
 
-import exo.portal.component.identiy.opendsconfig.opends.PlfOpenDSService;
+import exo.portal.component.identiy.opendsconfig.opends.OpenDSService;
 import org.exoplatform.component.test.ConfigurationUnit;
 import org.exoplatform.component.test.ConfiguredBy;
 import org.exoplatform.component.test.ContainerScope;
@@ -27,7 +27,7 @@ public class TestOISyncDefaultConf extends BasicTestCase {
 
     private static Log log = ExoLogger.getLogger(TestOISyncDefaultConf.class.getName());
 
-    private PlfOpenDSService openDSService = new PlfOpenDSService(null);
+    private OpenDSService openDSService = new OpenDSService(null);
     private PortalContainer container;
     private OrganizationService organization;
 

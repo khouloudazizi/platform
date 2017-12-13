@@ -22,13 +22,11 @@
     <dependency>
       <groupId>sun-opends</groupId>
       <artifactId>OpenDS</artifactId>
-      <version>1.0.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>berkeleydb</groupId>
       <artifactId>je</artifactId>
-      <version>3.2.76</version>
       <scope>test</scope>
     </dependency>
     <!-- To replace the old xstream:xstream version from picocontainer -->
@@ -144,6 +142,12 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.gatein.portal</groupId>
+      <artifactId>exo.portal.component.identity</artifactId>
+      <type>test-jar</type>
       <scope>test</scope>
     </dependency>
   </dependencies>

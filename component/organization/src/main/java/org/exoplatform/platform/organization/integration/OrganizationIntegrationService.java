@@ -53,7 +53,6 @@ import org.picocontainer.Startable;
 import javax.jcr.Session;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This Service create Organization Model profiles, for User and Groups not
@@ -193,8 +192,7 @@ public class OrganizationIntegrationService implements Startable {
       if(picketLinkIDMService != null){
         IdentityStoreRepository identityStoreRepository =  ((IdentitySessionImpl)picketLinkIDMService.getIdentitySession()).getSessionContext().getIdentityStoreRepository();
         //test on getClass().getName() instead of instanceof to be sure that it's not a super class that inherits from ExoFallbackIdentityStoreRepository
-        boolean equals = identityStoreRepository.getClass().getName() == ExoFallbackIdentityStoreRepository.class.getName();
-        if(identityStoreRepository != null && equals){
+        if(identityStoreRepository != null && identityStoreRepository.getClass().getName() == ExoFallbackIdentityStoreRepository.class.getName()){
           exoFallbackISRepository = (ExoFallbackIdentityStoreRepository)identityStoreRepository;
           List<IdentityStore> identityStores = exoFallbackISRepository.getIdentityStores(PLIDM_USER_IDENTITY_TYPE);
           identityStoresInvocationContext = ((IdentitySessionImpl) picketLinkIDMService.getIdentitySession()).getSessionContext().resolveStoreInvocationContext();
@@ -1278,10 +1276,8 @@ public class OrganizationIntegrationService implements Startable {
     }
     long ldapStoreCount = identityStores.stream().filter(identityStore -> identityStore.getClass().getName().equals(ExoLDAPIdentityStoreImpl.class.getName())).count();
     long hibernateStoreCount = identityStores.stream().filter(identityStore -> identityStore.getClass().getName().equals(ExoHibernateIdentityStoreImpl.class.getName())).count();
-    if(ldapStoreCount !=1 || hibernateStoreCount !=1){
-      return false;
-    }
-    return true;
+  
+    return ldapStoreCount ==1 && hibernateStoreCount ==1;
   }
 
   private void syncAllUsers(String eventType, List<String> activatedUsers) throws Exception{
