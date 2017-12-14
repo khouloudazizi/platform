@@ -62,18 +62,12 @@ public class TestOISyncDefaultConf extends BasicTestCase {
         deleteUser("anoissi");
         deleteUser("admin");
         deleteUser("testAdd");
-        openDSService.cleanUpDN("dc=example,dc=com");
-
         if (session != null) {
             session.logout();
         }
-        try {
-            openDSService.cleanUpDN("dc=example,dc=com");
-            openDSService.stop();
+        openDSService.cleanUpDN("dc=portal,dc=example,dc=com");
+        openDSService.stop();
 
-        } catch (Exception e) {
-            log.error("Error in stopping OPENDS", e);
-        }
         super.tearDown();
     }
 
@@ -81,32 +75,32 @@ public class TestOISyncDefaultConf extends BasicTestCase {
 
     public void testAdded() throws Exception {
         activatedUsers = Util.getActivatedUsers(session);
-        assertEquals(4, activatedUsers.size());
+        assertEquals(11, activatedUsers.size());
         openDSService.addUserAccount("testAdd",USER_CONTAINER);
         organizationIntegrationService.syncAllUsers(EventType.ADDED.name());
         activatedUsers = Util.getActivatedUsers(session);
-        assertEquals(5, activatedUsers.size());
+        assertEquals(12, activatedUsers.size());
     }
 
     public void testDeleted() throws Exception {
         activatedUsers = Util.getActivatedUsers(session);
-        assertEquals(4, activatedUsers.size());
-        deleteUserFromOpenDs("anoissi");
+        assertEquals(11, activatedUsers.size());
+        deleteUserFromOpenDs("User");
         organizationIntegrationService.syncAllUsers(EventType.DELETED.name());
         activatedUsers  = Util.getActivatedUsers(session);
-        assertEquals(3, activatedUsers.size());
+        assertEquals(10, activatedUsers.size());
     }
 
     public void testUpdated() throws Exception{
-        User anoissi = uHandler.findUserByName("anoissi");
-        assertNotNull(anoissi);
-        assertEquals(anoissi.getLastName(),"Noissi");
-        deleteUserFromOpenDs("anoissi");
-        openDSService.addUserAccount("anoissi",USER_CONTAINER);
+        User jduke = uHandler.findUserByName("jduke1");
+        assertNotNull(jduke);
+        assertEquals(jduke.getLastName(),"Duke1");
+        deleteUserFromOpenDs("jduke1");
+        openDSService.addUserAccount("jduke1",USER_CONTAINER);
         organizationIntegrationService.syncAllUsers(EventType.UPDATED.name());
-        anoissi = uHandler.findUserByName("anoissi");
-        assertNotNull(anoissi);
-        assertEquals("surnameOfanoissi",anoissi.getLastName());
+        jduke = uHandler.findUserByName("jduke1");
+        assertNotNull(jduke);
+        assertEquals("surnameOfjduke1",jduke.getLastName());
     }
 
     private  void deleteUser(String username) {

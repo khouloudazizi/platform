@@ -16,14 +16,14 @@ public class TestOrganizationInjector extends BasicTestCase {
   OrganizationService organizationService = null;
   JMXDataInjector dataInjector = null;
   DataInjectorService dataInjectorService = null;
-  private OpenDSService plfOpenDSService = new OpenDSService(null);
+  private OpenDSService OpenDSService = new OpenDSService(null);
   private MembershipHandler membershipHandler;
 
 
   @Override
   protected void setUp() throws Exception {
-    plfOpenDSService.start();
-    plfOpenDSService.initLDAPServer();
+    OpenDSService.start();
+    OpenDSService.initLDAPServer();
     container = PortalContainer.getInstance();
     organizationService = (OrganizationService) container.getComponentInstanceOfType(OrganizationService.class);
     membershipHandler = organizationService.getMembershipHandler();
@@ -35,10 +35,10 @@ public class TestOrganizationInjector extends BasicTestCase {
 
   @Override
   protected void tearDown() throws Exception {
-    deleteUser("dataUser1");
-    deleteUser("dataUser2");
-    plfOpenDSService.cleanUpDN("dc=example,dc=com");
-    plfOpenDSService.stop();
+    deleteUser("jduke2");
+    deleteUser("jduke2");
+    OpenDSService.cleanUpDN("dc=portal,dc=example,dc=com");
+    OpenDSService.stop();
   }
   public void testDataInjectorService() throws Exception {
     User user1;
@@ -47,8 +47,8 @@ public class TestOrganizationInjector extends BasicTestCase {
     Membership membership;
     Group group ;
 
-    user1 = getUser("dataUser1");
-    user2 = getUser("dataUser2");
+    user1 = getUser("jduke1");
+    user2 = getUser("jduke2");
     membershipType = getMembershipType("dataMT");
     group = getGroup("/dataGroup");
 
@@ -58,13 +58,13 @@ public class TestOrganizationInjector extends BasicTestCase {
     dataInjector.extractData(file.getAbsolutePath());
     deleteMembershipType("dataMT");
     deleteGroup("dataGroup");
-    deleteUser("dataUser1");
-    deleteUser("dataUser2");
+    deleteUser("jduke1");
+    deleteUser("jduke2");
     dataInjector.injectData(file.getAbsolutePath());
 
-    user1 = getUser("dataUser1");
+    user1 = getUser("jduke1");
     assertNotNull(user1);
-    user2 = getUser("dataUser2");
+    user2 = getUser("jduke2");
     assertNotNull(user2);
 
     group = getGroup("/dataGroup");
@@ -73,10 +73,10 @@ public class TestOrganizationInjector extends BasicTestCase {
     membershipType = getMembershipType("dataMT");
     assertNotNull(membershipType);
 
-    membership = getMembership("dataMT", "dataUser1", "/dataGroup");
+    membership = getMembership("dataMT", "jduke1", "/dataGroup");
     assertNotNull(membership);
 
-    membership = getMembership("dataMT", "dataUser2", "/dataGroup");
+    membership = getMembership("dataMT", "jduke2", "/dataGroup");
     assertNotNull(membership);
   }
 

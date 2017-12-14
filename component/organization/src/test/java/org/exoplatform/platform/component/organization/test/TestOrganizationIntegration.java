@@ -55,7 +55,7 @@ public class TestOrganizationIntegration extends BasicTestCase {
   }
     @Override
     protected void tearDown() throws Exception {
-        plfOpenDSService.cleanUpDN("dc=example,dc=com");
+        plfOpenDSService.cleanUpDN("dc=portal,dc=example,dc=com");
         plfOpenDSService.stop();
     }
 
