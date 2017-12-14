@@ -15,18 +15,10 @@
                xsi:schemaLocation="http://www.exoplaform.org/xml/ns/kernel_1_2.xsd http://www.exoplaform.org/xml/ns/kernel_1_2.xsd"
                xmlns="http://www.exoplaform.org/xml/ns/kernel_1_2.xsd">
 
--->
-
     <component>
         <key>org.exoplatform.services.organization.idm.PicketLinkIDMCacheService</key>
         <type>org.exoplatform.services.organization.idm.PicketLinkIDMCacheService</type>
     </component>
-
-
-  <component>
-    <key>org.exoplatform.services.organization.idm.PicketLinkIDMCacheService</key>
-    <type>org.exoplatform.services.organization.idm.PicketLinkIDMCacheService</type>
-  </component>
     <component>
         <key>org.gatein.common.transaction.JTAUserTransactionLifecycleService</key>
         <type>org.gatein.common.transaction.JTAUserTransactionLifecycleServiceImpl</type>
@@ -47,25 +39,6 @@
             </value-param>
         </init-params>
     </component>
-  <component>
-    <key>org.exoplatform.services.organization.idm.PicketLinkIDMService</key>
-    <type>org.exoplatform.services.organization.idm.PicketLinkIDMServiceImpl</type>
-    <init-params>
-        <value-param>
-            <name>config</name>
-            <value>classpath:/conf/portal/picketlink-idm-config.xml</value>
-        </value-param>
-        <value-param>
-            <name>apiCacheConfig</name>
-            <value>classpath:/conf/cache/infinispan.xml</value>
-        </value-param>
-        <value-param>
-            <name>skipExpirationOfStructureCacheEntries</name>
-            <value>true</value>
-        </value-param>
-    </init-params>
-  </component>
-
     <component>
         <key>org.exoplatform.services.organization.idm.PicketLinkIDMService</key>
         <type>org.exoplatform.services.organization.idm.PicketLinkIDMServiceImpl</type>
