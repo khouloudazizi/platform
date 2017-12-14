@@ -5,7 +5,7 @@
          <topic>مواضيع</topic>
          <poll>استطلاع رأي</poll>
          <event>حدث</event>
-         <upload>تحميل ملف</upload>
+         <upload>الملف</upload>
          <wiki>صفحة ويكي</wiki>
 
       </label>
@@ -42,16 +42,17 @@
    <UICreateWiki>
       <label>
          <title>إنشاء صفحة ويكي جديدة:</title>
-         <location>في</location>
+         <location>المكان</location>
       </label>
    </UICreateWiki>
    <UICreateEvent>
       <label>
+         <Popup_title>Create a new Event</Popup_title>
          <Title>#{word.title}</Title>
          <Choix>إضافة:</Choix>
          <EndEvent>إلى</EndEvent>
          <StartEvent>من</StartEvent>
-         <Calendar>حدد الرزنامة</Calendar>
+         <Calendar>الرزنامة</Calendar>
          <all-day>طيلة اليوم</all-day>
          <defaultCalendarId>الافتراضي</defaultCalendarId>
       </label>

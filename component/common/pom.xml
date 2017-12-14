@@ -78,10 +78,6 @@
       <groupId>org.exoplatform.jcr</groupId>
       <artifactId>exo.jcr.component.ext</artifactId>
     </dependency>
-      <dependency>
-          <groupId>org.exoplatform.kernel</groupId>
-          <artifactId>exo.kernel.component.ext.cache.impl.infinispan.v5</artifactId>
-      </dependency>
     <dependency>
       <groupId>org.exoplatform.kernel</groupId>
       <artifactId>exo.kernel.commons</artifactId>
@@ -136,7 +132,7 @@
       <artifactId>exo.portal.webui.portal</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.gatein.shindig</groupId>
+      <groupId>org.apache.shindig</groupId>
       <artifactId>shindig-social-api</artifactId>
     </dependency>
     <dependency>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bundle>
+<UISetupPlatformToolBarPortlet>
+<label>
+<applications>Uygulamalar</applications>
+<content>İçerik</content>
+<siteExplorer>Site Explorer</siteExplorer>
+<wcmAdmin>İçerik Yönetimi</wcmAdmin>
+<users>Users</users>
+<newStaff>Kullanıcılar Ekle</newStaff>
+<org-management>Manage Users</org-management>
+<portal>Portal</portal>
+<administration>Administration</administration>
+<groupnavigation>Grup Siteleri</groupnavigation>
+<pageManagement>Sayfalar</pageManagement>
+<portalnavigation>Siteler</portalnavigation>
+<servicesManagement>Yönetim</servicesManagement>
+<monitoring>İzleme</monitoring>
+<spaces>Alanlar</spaces>
+<Branding>Marka</Branding>
+      <Notification>Bildirimler</Notification>
+<ide>IDE</ide>
+<search>Search Administration</search>
+</label>
+</UISetupPlatformToolBarPortlet>
+</bundle>

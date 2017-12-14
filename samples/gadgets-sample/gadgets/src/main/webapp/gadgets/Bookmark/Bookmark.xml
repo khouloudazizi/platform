@@ -10,6 +10,7 @@
     <Locale lang="ar" messages="locale/ar.xml"/>
     <Locale lang="de" messages="locale/de.xml"/>
     <Locale lang="pt_BR" messages="locale/pt_BR.xml"/>
+    <Locale lang="pt_PT" messages="locale/pt_PT.xml"/>
     <Locale lang="it" messages="locale/it.xml"/>
     <Locale lang="ru" messages="locale/ru.xml"/>
     <Locale lang="tr" messages="locale/tr.xml"/>
@@ -40,7 +41,7 @@
     <link type="text/css" rel="stylesheet" href="/eXoSkin/skin/css/platform/samples/gadgets-sample/exo-gadget-resources/gadget-common.css" />
     <link type="text/css" rel="stylesheet" href="/eXoSkin/skin/css/platform/samples/gadgets-sample/gadgets/Bookmark.css" />
 
-    <script language="javascript" type="text/javascript" src="/eXoResources/javascript/jquery-1.7.1.js"></script>
+    <script language="javascript" type="text/javascript" src="/eXoResources/javascript/jquery-3.2.1.js"></script>
     <script language="javascript" type="text/javascript" src="/eXoResources/skin/bootstrap/js/bootstrap-tooltip.js"></script>
   
     <script type="text/javascript">

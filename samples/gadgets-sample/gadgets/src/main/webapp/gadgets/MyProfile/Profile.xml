@@ -4,7 +4,7 @@
     author_email="damien.lauberton@exoplatform.com"
     description="My Profile is a gadget to display the current user information for eXo Social."
     height="100" >
-    <Require feature="opensocial-0.8" />
+    <Require feature="opensocial-2.5" />
     <Require feature="dynamic-height" />
     <Require feature="views" />
     <Require feature="settitle" />
@@ -18,7 +18,7 @@
   <link rel="stylesheet" type="text/css" href="/eXoSkin/skin/css/Core.css" />
   <link rel="stylesheet" type="text/css" href="/eXoSkin/skin/css/platform/samples/gadgets-sample/exo-gadget-resources/gadget-common.css" />
   <link rel="stylesheet" type="text/css" href="/eXoSkin/skin/css/platform/samples/gadgets-sample/gadgets/Profile.css" />
-  <script language="javascript" type="text/javascript" src="/eXoResources/javascript/jquery-1.7.1.js"></script>
+  <script language="javascript" type="text/javascript" src="/eXoResources/javascript/jquery-3.2.1.js"></script>
   <script language="javascript" type="text/javascript" src="/eXoResources/skin/bootstrap/js/bootstrap-tooltip.js"></script>
   <script type="text/javascript" src="script/profile.js"></script>
     

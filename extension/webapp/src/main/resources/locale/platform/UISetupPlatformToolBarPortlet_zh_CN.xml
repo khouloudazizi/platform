@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bundle>
+<UISetupPlatformToolBarPortlet>
+<label>
+<applications>应用程序</applications>
+<content>内容</content>
+<siteExplorer>Site Explorer</siteExplorer>
+<wcmAdmin>内容管理</wcmAdmin>
+<users>Users</users>
+<newStaff>添加用户</newStaff>
+<org-management>Manage Users</org-management>
+<portal>门户站点</portal>
+<administration>Administration</administration>
+<groupnavigation>群组站点</groupnavigation>
+<pageManagement>页面</pageManagement>
+<portalnavigation>站点</portalnavigation>
+<servicesManagement>管理</servicesManagement>
+<monitoring>监测</monitoring>
+<spaces>空间</spaces>
+<Branding>品牌</Branding>
+      <Notification>电子邮件通知</Notification>
+<ide>集成开发工具</ide>
+<search>Search Administration</search>
+</label>
+</UISetupPlatformToolBarPortlet>
+</bundle>

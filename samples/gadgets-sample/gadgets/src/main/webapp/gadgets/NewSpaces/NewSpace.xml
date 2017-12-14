@@ -6,7 +6,7 @@
   author_email="tungdt@exoplatform.com"
   thumbnail="/intranet-gadgets/skin/images/NewSpaces/SpaceLogoDefault_61x61.gif"
   description="Display the latest created spaces">
-    <Require feature="opensocial-0.8" />
+    <Require feature="opensocial-2.5" />
     <Require feature="dynamic-height" />
     <Require feature="settitle" />
     <Require feature="views" />
@@ -29,7 +29,7 @@
     
     <script type="text/javascript" src="./script/newSpaces.js"></script>
     <script type="text/javascript" src="./script/date.format.js"></script>
-    <script language="javascript" type="text/javascript" src="/exo-gadget-resources/script/jquery/1.6.2/jquery.min.js"></script>
+    <script language="javascript" type="text/javascript" src="/eXoResources/javascript/jquery-3.2.1.js"></script>
        
     <div id="NewSpaces-Gadget" class="UIGadgetThemes uiBox">
       <h6 class="title left">
