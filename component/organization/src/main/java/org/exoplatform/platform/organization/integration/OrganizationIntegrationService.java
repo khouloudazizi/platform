@@ -1303,7 +1303,7 @@ public class OrganizationIntegrationService implements Startable {
     }
 
     if(!isDefaultConf || skip){
-      LOG.debug("We will use the generic synchronization method as this server don't use the default configuration picketLinkIDMService");
+      LOG.info("We will use the generic synchronization method as this server don't use the default configuration picketLinkIDMService");
       usersListAccess = organizationService.getUserHandler().findAllUsers();
       userListAccessSize = usersListAccess.getSize();
     }

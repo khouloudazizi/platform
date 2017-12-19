@@ -761,6 +761,7 @@
         <groupId>sun-opends</groupId>
         <artifactId>OpenDS</artifactId>
         <version>${sun-opends.version}</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>berkeleydb</groupId>
