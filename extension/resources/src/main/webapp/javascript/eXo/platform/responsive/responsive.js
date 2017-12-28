@@ -6,6 +6,7 @@
     $('body').addClass('open-right-bar');  
   }
 
+  var leftPanelStateKey = 'exo-platform-left-menu-collapsed';
 
   var tabManagerApp = {
     container : $('#UIToolbarContainer'),
@@ -13,9 +14,9 @@
       if ($('.OfficeRightTDContainer').length != 0) {    
         $('.OfficeMiddleTDContainer').append($('<a href="javascript:void(0)" class="visible-tablet toggle-right-bar"><i class="uiIconVerticalLines"></i></a>'));
         var _h = $(window).height(); 
-        $('.toggle-right-bar').css('top',_h/2);  
-        $('#OfficeRight').css('height',$('.RightBodyTDContainer ').height());     
+        $('.toggle-right-bar').css('top',_h/2);
       }
+
       this.toggleLeftBar();
       this.toggleRightBar();
       // this.leftNavAccordion();
@@ -34,10 +35,6 @@
       // $('#ToolBarSearch > a').click(function(){
       //   tabManagerApp.searchOnTopNavivation();
       // });
-      // adapt dropdown menu with screen size if height too big
-      $('.UIToolbarContainer .dropdown-toggle').on('click', function(event) {  
-        tabManagerApp.setHeightMenu();
-      });
       //
       this.setPositionRightButton();
     },
@@ -50,14 +47,43 @@
         });
       }
     },
-    toggleLeftBar : function() {
-       $('.toggle-left-bar').on('click', function() {
-        if($('body').hasClass('open-left-bar')) {
-          tabManagerApp.hideLeftPanel();  
-        } else {
-          tabManagerApp.showLeftPanel();  
-        }
+    savePanelState : function(collapsed) {
+      $.ajax({
+        url: "/rest/v1/settings/USER," + eXo.env.portal.userName + "/GLOBAL/" + leftPanelStateKey,
+        contentType: "application/json",
+        data: JSON.stringify({"value": collapsed}),
+        type: "PUT"
       });
+    },
+    toggleLeftBar : function() {
+
+      var toggle = function() {
+        // manage boris effect
+        var hamburgerMenu = $('.toggle-left-bar');
+        hamburgerMenu.addClass('toggle-left-bar-click');
+        setTimeout(function(){ hamburgerMenu.removeClass('toggle-left-bar-click'); }, 300);
+
+        $body = $('body');
+        if ($(window).width()  < 1025) {
+          if($body.hasClass('open-left-bar')) {
+            tabManagerApp.hideLeftPanel();
+          } else {
+            tabManagerApp.showLeftPanel();
+          }
+        } else {
+          var collapseClass = 'collapse-left-bar';
+          $body.toggleClass(collapseClass + ' expand-left-bar');
+
+          tabManagerApp.savePanelState($body.hasClass(collapseClass));
+
+          $('.LeftNavigationTDContainer').off().on('transitionend', function() {
+            $(window).trigger('resize');
+            $("#LeftNavigation").perfectScrollbar('update');
+          });
+        }
+      };
+
+      $('.toggle-left-bar').off().on('click', toggle);
     },
     toggleRightBar : function() {
       $('.toggle-right-bar').on('click', function() {
@@ -74,10 +100,10 @@
       $('body').removeClass('hidden-left-bar');
       $('.mask-layer-right').remove();
       $('#RightBody').before('<div class="mask-layer-right"></div>');
-      $('.RightBodyTDContainer:first').css('height', leftNavi.height());
       $('body,html').css('overflow-y',"hidden");
       $('.mask-layer-right').on('click',function(){
         tabManagerApp.hideLeftPanel();
+        return false;
       });
       leftNavi.addClass('expanded');      
     },
@@ -249,19 +275,6 @@
      //    }
      //  }
     // },
-    setHeightMenu : function(){
-      var dropdow_toggle=$('.UIToolbarContainer .dropdown-toggle, .UIToolbarContainer .dropdown-menu');
-      //var _w = $(window).width();
-      if (windowsize < 768 ) {
-        var dropdowWidth =  dropdow_toggle.next().height();
-        
-        var max_height= Math.max($(window).height(), dropdowWidth) - 70 ;
-
-        dropdow_toggle.next().css({
-           'max-height' : max_height
-        }).addClass('overflow-y');
-      }
-    }
   };
   //OnLoad
   $(document).ready(function(event) {
@@ -325,20 +338,6 @@
 
 
   });
-  //OnResize
-  $(window).resize(function(event) {
-    windowsize = $(window).width();
-    
-    setTimeout(function() {
-      // if($('#ToolBarSearch').find('.action_close').length > 0) {
-      //   tabManagerApp.searchOnTopNavivation();
-      // }
-      tabManagerApp.setHeightMenu();
-
-    $('#OfficeRight').css('height',$('.RightBodyTDContainer ').height());
-    }, 50);
-
-  });
 
   // function Responsive() {};
 
@@ -352,5 +351,5 @@
   // return {
   //   Responsive : eXo.ecm.Responsive
   // };
-
+  return tabManagerApp
 })($);
