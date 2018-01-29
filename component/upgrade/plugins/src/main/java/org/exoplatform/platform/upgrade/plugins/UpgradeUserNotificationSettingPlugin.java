@@ -68,6 +68,10 @@ public class UpgradeUserNotificationSettingPlugin extends UpgradeProductPlugin {
   /** */
   private static final String SETTING_LIFE_CYCLE_NAME = "setting";
   /** */
+  public static final String SOCIAL_WORKSPACE_NAME = "social";
+
+
+  /** */
   private final String workspace;
   /** */
   private final String settingWorkspace;
@@ -84,7 +88,7 @@ public class UpgradeUserNotificationSettingPlugin extends UpgradeProductPlugin {
     super(initParams);
     NotificationConfiguration configuration = CommonsUtils.getService(NotificationConfiguration.class);
     this.workspace = configuration != null ? configuration.getWorkspace() : null;
-    this.socialWorkspace = manager.getLifeCycle(SocialChromatticLifeCycle.SOCIAL_LIFECYCLE_NAME).getWorkspaceName();
+    this.socialWorkspace = SOCIAL_WORKSPACE_NAME;
     this.settingWorkspace = manager.getLifeCycle(SETTING_LIFE_CYCLE_NAME).getWorkspaceName();
     this.channelProperties = new HashMap<String, String>();
   }
