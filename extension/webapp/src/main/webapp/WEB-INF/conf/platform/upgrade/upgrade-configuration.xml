@@ -456,6 +456,11 @@
 	          <description>The plugin execution order</description>
 	          <value>2</value>
 	        </value-param>
+            <value-param>
+              <name>social.workspace</name>
+              <description>The name of socail workspace</description>
+              <value>social</value>
+            </value-param>
 	      </init-params>
 	    </component-plugin>
       <component-plugin profiles="all">

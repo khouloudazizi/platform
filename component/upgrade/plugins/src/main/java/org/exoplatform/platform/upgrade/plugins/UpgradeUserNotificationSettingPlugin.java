@@ -47,6 +47,7 @@ import org.exoplatform.commons.upgrade.UpgradeProductPlugin;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.commons.version.util.VersionComparator;
 import org.exoplatform.container.xml.InitParams;
+import org.exoplatform.container.xml.ValueParam;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
 import org.exoplatform.services.jcr.impl.core.query.QueryImpl;
 import org.exoplatform.services.log.ExoLogger;
@@ -68,8 +69,9 @@ public class UpgradeUserNotificationSettingPlugin extends UpgradeProductPlugin {
   /** */
   private static final String SETTING_LIFE_CYCLE_NAME = "setting";
   /** */
-  public static final String SOCIAL_WORKSPACE_NAME = "social";
-
+  public static final String SOCIAL_WORKSPACE_NAME_PARAM = "social.workspace";
+  /** */
+  public static final String DEFAULT_WORKSPACE_NAME= "social";
 
   /** */
   private final String workspace;
@@ -88,9 +90,10 @@ public class UpgradeUserNotificationSettingPlugin extends UpgradeProductPlugin {
     super(initParams);
     NotificationConfiguration configuration = CommonsUtils.getService(NotificationConfiguration.class);
     this.workspace = configuration != null ? configuration.getWorkspace() : null;
-    this.socialWorkspace = SOCIAL_WORKSPACE_NAME;
     this.settingWorkspace = manager.getLifeCycle(SETTING_LIFE_CYCLE_NAME).getWorkspaceName();
     this.channelProperties = new HashMap<String, String>();
+    ValueParam value = initParams.getValueParam(SOCIAL_WORKSPACE_NAME_PARAM);
+    this.socialWorkspace = value != null ? value.getValue() : DEFAULT_WORKSPACE_NAME;
   }
 
   @Override
