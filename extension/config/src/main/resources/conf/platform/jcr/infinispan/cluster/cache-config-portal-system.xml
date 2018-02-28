@@ -45,7 +45,7 @@
       <transaction mode="NON_XA" locking="PESSIMISTIC" transaction-manager-lookup="org.exoplatform.services.transaction.infinispan.JBossStandaloneJTAManagerLookup" />
       <eviction size="${exo.jcr.systemworkspace.eviction.maxEntries:1000000}" strategy="LRU" thread-policy="DEFAULT"/>
       <state-transfer enabled="${exo.jcr.cluster.systemworkspace.statetransfer.fetchinmemorystate:false}" timeout="${exo.jcr.cluster.systemworkspace.statetransfer.timeout:240000}" />
-      <expiration interval="${exo.jcr.systemworkspace.expiration.wakeupinterval:60000}"/>
+      <expiration interval="${exo.jcr.systemworkspace.expiration.wakeupinterval:5000}"/>
     </replicated-cache-configuration>
   </cache-container>
 </infinispan>
