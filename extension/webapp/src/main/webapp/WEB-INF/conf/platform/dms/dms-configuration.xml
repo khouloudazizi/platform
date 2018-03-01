@@ -15,6 +15,12 @@
         <value>${webdav.def-folder-node-type:nt:folder}</value>
       </value-param>
 
+      <!-- disable directory folder listing-->
+      <value-param>
+        <name>disable.directory.listing</name>
+        <value>${webdav.disable.directory.listing:false}</value>
+      </value-param>
+
       <!-- default node type which is used for the creation of files -->
       <value-param>
         <name>def-file-node-type</name>
