@@ -17,8 +17,8 @@
 
       <!-- disable directory folder listing-->
       <value-param>
-        <name>disable.directory.listing</name>
-        <value>${webdav.disable.directory.listing:false}</value>
+        <name>directory-listing-disable</name>
+        <value>${exo.webdav.directory.listing.disable:false}</value>
       </value-param>
 
       <!-- default node type which is used for the creation of files -->
