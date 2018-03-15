@@ -135,15 +135,7 @@ public class UIUserNavigationPortlet extends UIPortletApplication {
     }
 
     public boolean isProfileOwner() {
-        return Utils.getViewerRemoteId().equals(getOwnerRemoteId());
-    }
-
-    public static String getOwnerRemoteId() {
-        String currentUserName = org.exoplatform.platform.navigation.component.utils.NavigationUtils.getCurrentUser();
-        if (currentUserName == null || currentUserName.equals("")) {
-            return Utils.getViewerRemoteId();
-        }
-        return currentUserName;
+        return Utils.getViewerRemoteId().equals(Utils.getOwnerRemoteId());
     }
 
     public Profile getOwnerProfile() {
@@ -230,19 +222,19 @@ public class UIUserNavigationPortlet extends UIPortletApplication {
     //////////////////////////////////////////////////////////
 
     public String getNotificationsURL() {
-      return LinkProvider.getUserNotificationSettingUri(getOwnerRemoteId());
+      return LinkProvider.getUserNotificationSettingUri(Utils.getOwnerRemoteId());
     }
 
     public String getactivitesURL() {
-        return LinkProvider.getUserActivityUri(getOwnerRemoteId());
+        return LinkProvider.getUserActivityUri(Utils.getOwnerRemoteId());
     }
 
     public String getrelationURL() {
-        return LinkProvider.getUserConnectionsYoursUri(getOwnerRemoteId());
+        return LinkProvider.getUserConnectionsYoursUri(Utils.getOwnerRemoteId());
     }
 
     public String getWikiURL() {
-        return NavigationURLUtils.getURLInCurrentPortal(WIKI_REF)+USER +getOwnerRemoteId()+WIKI_HOME;
+        return NavigationURLUtils.getURLInCurrentPortal(WIKI_REF)+USER +Utils.getOwnerRemoteId()+WIKI_HOME;
     }
 
     protected StatusInfo getStatusInfo() {
@@ -315,7 +307,7 @@ public class UIUserNavigationPortlet extends UIPortletApplication {
     }
 
     public String getProfileLink() {
-        return LinkProvider.getUserProfileUri(getOwnerRemoteId());
+        return LinkProvider.getUserProfileUri(Utils.getOwnerRemoteId());
     }
 
 

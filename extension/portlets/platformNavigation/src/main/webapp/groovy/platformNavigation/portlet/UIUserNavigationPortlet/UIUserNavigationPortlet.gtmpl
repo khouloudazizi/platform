@@ -23,7 +23,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 
 def uicomponentId = uicomponent.id;
 
-def profileUsername = uicomponent.getOwnerRemoteId();
+def profileUsername = org.exoplatform.social.webui.Utils.getOwnerRemoteId();
 def profileFullname = "";
 def srcImage = null;
 def profile = uicomponent.getOwnerProfile();
