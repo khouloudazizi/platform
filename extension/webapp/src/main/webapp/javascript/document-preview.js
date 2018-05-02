@@ -159,7 +159,7 @@
             self.settings.activity.liked = true;
             self.settings.activity.likes++;
             $('#documentPreviewContainer .nbOfLikes').html(self.settings.activity.likes);
-            self.refreshLikeLink();
+            self.refreshLikeLink('clickEvent');
             self.clearErrorMessage();
           }).fail(function () {
             self.showErrorMessage("${UIActivity.comment.canNotLike}");
@@ -173,7 +173,7 @@
             self.settings.activity.liked = false;
             self.settings.activity.likes--;
             $('#documentPreviewContainer .nbOfLikes').html(self.settings.activity.likes);
-            self.refreshLikeLink();
+            self.refreshLikeLink('clickEvent');
             self.clearErrorMessage();
           }).fail(function () {
             self.showErrorMessage("${UIActivity.comment.canNotUnLike}");
@@ -182,14 +182,20 @@
       }
     },
 
-    refreshLikeLink: function() {
-      var likeIcon = $('#documentPreviewContainer #previewLikeLink .uiIconThumbUp');
+    refreshLikeLink: function(event) {
+      var likeLink = $('#documentPreviewContainer #previewLikeLink');
+      var likeIcon = likeLink.find('.uiIconThumbUp');
       if(this.settings.activity.liked == true) {
+        likeLink.attr("data-original-title", "${UIActivity.label.Unlike}");
         likeIcon.addClass('uiIconBlue');
         likeIcon.removeClass('uiIconLightGray');
       } else {
+        likeLink.attr("data-original-title", "${UIActivity.label.Like}");
         likeIcon.removeClass('uiIconBlue');
         likeIcon.addClass('uiIconLightGray');
+      }
+      if (event) {
+        likeLink.tooltip('show');
       }
     },
 
@@ -410,11 +416,14 @@
 
       if(this.settings.doc.remoteEditURL) {
         $(".previewBtn").append(
-            '<div class="remoteEditBtn"> \
+            '<div class="remoteEditBtn hidden-tabletL"> \
                <a  href="' + this.settings.doc.remoteEditURL + '"><i  style="display:none;" class="uiIcon16x16FileDefault uiIconEcmsOpenDocument_' + this.settings.activity.id + ' uiIconWhite ' + this.settings.doc.remoteEditClass + '"></i>&nbsp;' + this.settings.doc.remoteEditTitle + '</a> \
             </div>'
         );
       }
+      
+      $('#documentPreviewContainer #previewLikeLink').tooltip();
+      
       $("#uiPreviewErrorMessage").hide();
       $("#uiPreviewErrorMessageIcon").click(function() {
           $("#uiPreviewErrorMessage").hide();

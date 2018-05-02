@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bundle>
   <Signin>
-    <welcome>Welcome</welcome>
-    <login>Login</login>
-    <logout>Logout</logout>
-    <language>Change Language</language>
-    <register>Register</register>
+    <welcome>Maligayang pagdating</welcome>
+    <login>Mag-login</login>
+    <logout>Mag-logout</logout>
+    <language>Magpalit ng Lengguwahe</language>
+    <register>Ang rehistro</register>
   </Signin>
 
   <ACMEPortal>

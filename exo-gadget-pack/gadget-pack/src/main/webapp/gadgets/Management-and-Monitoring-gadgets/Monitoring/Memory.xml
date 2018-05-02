@@ -20,7 +20,7 @@
     <Locale lang="ru" messages="locale/ru.xml"/>
     <Locale lang="tr" messages="locale/tr.xml"/>
     <Locale lang="zh_CN" messages="locale/zh_CN.xml"/>
-    <Locale lang="zh_TW" messages="locale/zh_TW.xml"/>   
+    <Locale lang="zh_TW" messages="locale/zh_TW.xml"/>
     <Locale lang="lt" messages="locale/lt.xml"/>
     <Locale lang="cs" messages="locale/cs.xml"/>
     <Locale lang="uk" messages="locale/uk.xml"/>
@@ -35,6 +35,8 @@
     <Locale lang="sl" messages="locale/sl.xml"/>
     <Locale lang="he" messages="locale/he.xml"/>
     <Locale lang="hu" messages="locale/hu.xml"/>
+    <Locale lang="in" messages="locale/in.xml"/>
+    <Locale lang="fil" messages="locale/fil.xml"/>
   </ModulePrefs>
   <Content type="html">
     <![CDATA[     

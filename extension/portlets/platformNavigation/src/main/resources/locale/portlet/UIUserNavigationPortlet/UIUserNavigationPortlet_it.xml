@@ -8,28 +8,28 @@
          <wiki>Wiki</wiki>
          <Myactivities>Le mie attività</Myactivities>
          <Myprofile>Mio Profilo</Myprofile>
-         <Myconnections>Mio Network</Myconnections>
+         <Myconnections>Le mie connessioni</Myconnections>
          <Mywiki>Mio Wiki</Mywiki>
          <Mydashboard>Mio Dashboard</Mydashboard>
          <NotificationSettingsPortlet>Mie notifiche</NotificationSettingsPortlet>
          <More>Di più</More>
-         <EditProfile>Modifica Profilo</EditProfile>
+         <EditProfile>Modificare</EditProfile>
          <available>Disponibile</available>
          <offline>Non in linea</offline>
-         <away>Assente</away>
+         <away>Fuori</away>
          <donotdisturb>Non disturbare</donotdisturb>
          <invisible>Invisibile</invisible>
-         <bannerSizeHint>Pick an image of 130 pixels height minimum.</bannerSizeHint>
+         <bannerSizeHint>Scegli un'immagine con almeno 130 pixel di altezza.</bannerSizeHint>
       </label>
    </UIUserNavigationPortlet>
    <UIAvatarUploaderPopup>
       <title>
-         <UIAvatarUploader>Carica Avatar</UIAvatarUploader>
+         <UIAvatarUploader>Carica un'immagine</UIAvatarUploader>
       </title>
    </UIAvatarUploaderPopup>
    <UIPopupBannerUploader>
       <title>
-         <UIBannerUploader>Carica Avatar</UIBannerUploader>
+         <UIBannerUploader>Carica un'immagine</UIBannerUploader>
       </title>
    </UIPopupBannerUploader>
 </bundle>

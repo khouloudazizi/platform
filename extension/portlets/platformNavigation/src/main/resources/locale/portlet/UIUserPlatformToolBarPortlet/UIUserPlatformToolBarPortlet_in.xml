@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bundle>
+<UIUserPlatformToolBarPortlet>
+<label>
+<NotificationSettingsPortlet>Pemberitahuan Saya</NotificationSettingsPortlet>
+<activities>Aktifitas Saya</activities>
+<profile>Profil Saya</profile>
+<network>Koneksi Saya</network>
+<wiki>Wiki Saya</wiki>
+<account>Akun</account>
+<language>Ganti Bahasa</language>
+<logout>Keluar</logout>
+        <dashboard>Dasbor Saya</dashboard>
+</label>
+</UIUserPlatformToolBarPortlet>
+</bundle>

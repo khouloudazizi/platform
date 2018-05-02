@@ -13,13 +13,13 @@
          <Mydashboard>Můj Dashboard</Mydashboard>
          <NotificationSettingsPortlet>Oznámení</NotificationSettingsPortlet>
          <More>Více</More>
-         <EditProfile>Upravit profil</EditProfile>
+         <EditProfile>Upravit</EditProfile>
          <available>K dispozici</available>
          <offline>Offline</offline>
          <away>Nepřítomný</away>
-         <donotdisturb>Do not disturb</donotdisturb>
-         <invisible>Invisible</invisible>
-         <bannerSizeHint>Pick an image of 130 pixels height minimum.</bannerSizeHint>
+         <donotdisturb>Nerušit</donotdisturb>
+         <invisible>Neviditelný</invisible>
+         <bannerSizeHint>Zvolte obrázek o výšce nejméně 130 pixelů.</bannerSizeHint>
       </label>
    </UIUserNavigationPortlet>
    <UIAvatarUploaderPopup>

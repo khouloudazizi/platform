@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bundle>
+   <UIUserPlatformToolBarCreatePortlet>
+      <label>
+         <topic>Pembahasan</topic>
+         <poll>Pemilihan</poll>
+         <event>Kegiatan</event>
+         <upload>Berkas</upload>
+         <wiki>Wiki Halaman</wiki>
+
+      </label>
+   </UIUserPlatformToolBarCreatePortlet>
+   <UICreateList>
+      <label>
+         <topic>Pembahasan</topic>
+         <poll>Pemilihan</poll>
+         <CreateANew>Terbaru {1}:</CreateANew>
+         <NoForum>Maaf, tidak ada forum yang tersedia namun di mana anda bisa membuat {1}. Mulailah dengan membuat sebuah ruang pertama dan lalu coba lagi.</NoForum>
+         <RequireSelectForum>Silahkan memilih sebuah forum.</RequireSelectForum>
+      </label>
+      <action>
+         <Next>#{word.next}</Next>
+         <Cancel>#{word.cancel}</Cancel>
+      </action>
+   </UICreateList>
+   <UICreateTopic>
+      <label>
+         <SelectAForum>Memilih Forum</SelectAForum>
+         <location>Di lokasi</location>
+         <forumId>Dan Forum</forumId>
+         <FilterForums>Menyaring forum</FilterForums>
+      </label>
+   </UICreateTopic>
+   <UICreatePoll>
+      <label>
+         <SelectAForum>Pilih forum</SelectAForum>
+         <location>Di lokasi</location>
+         <forumId>Dan Forum</forumId>
+         <FilterForums>Menyaring forum</FilterForums>
+      </label>
+   </UICreatePoll>
+   <UICreateWiki>
+      <label>
+         <title>Halaman Baru Wiki:</title>
+         <location>Lokasi</location>
+      </label>
+   </UICreateWiki>
+   <UICreateEvent>
+      <label>
+         <Popup_title>Buat sebuah peristiwa baru</Popup_title>
+         <Title>#{word.title}</Title>
+         <Choix>Tambah baru:</Choix>
+         <EndEvent>Untuk</EndEvent>
+         <StartEvent>Dari</StartEvent>
+         <Calendar>Kalendar</Calendar>
+         <all-day>Sepanjang hari</all-day>
+         <defaultCalendarId>Standar</defaultCalendarId>
+      </label>
+      <msg>
+         <summary-field-required>Bidangnya "Judul" diperlukan.</summary-field-required>
+         <fromDate-format>Format tanggal "Dari" salah.</fromDate-format>
+         <toDate-format>Format tanggal "kepada" tidak benar.</toDate-format>
+         <logic-required>Maaf, anda tidak dapat membuat acara yang berakhir sebelum itu dimulai.</logic-required>
+         <cant-add-event-on-remote-calendar>Anda tidak bisa menambahkan acara ke kalender jarak jauh</cant-add-event-on-remote-calendar>
+         <add-successfully>
+            <Event>Acara itu ditambahkan ke dalam {1}</Event>
+            <Task>Tugas itu ditambahkan ke dalam {1}</Task>
+         </add-successfully>
+         <add-unsuccessfully>{0} itu tidak ditambahkan.</add-unsuccessfully>
+      </msg>
+      <action>
+         <Next>#{word.save}</Next>
+         <Cancel>#{word.cancel}</Cancel>
+      </action>
+   </UICreateEvent>
+    <UIUploadFile>
+        <Select>Pilih file</Select>
+        <action>
+          <close>#{word.close}</close>
+        </action>
+    </UIUploadFile>
+   <Choix>
+      <label>
+         <Event>Kegiatan</Event>
+         <Task>Tugas</Task>
+      </label>
+   </Choix>
+</bundle>

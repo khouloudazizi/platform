@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bundle>
+<UINotificationPopoverToolbarPortlet>
+<label>
+<MarkAllAsRead>Tandai semua yang telah dibaca</MarkAllAsRead>
+<NoNotifications>Tidak ada pemberitahuan</NoNotifications>
+<InlineImage>Gambar Sejajar</InlineImage>
+<ViewAll>Lihat Semua</ViewAll>
+<Loading>Sedang Memuat</Loading>
+</label>
+</UINotificationPopoverToolbarPortlet>
+</bundle>

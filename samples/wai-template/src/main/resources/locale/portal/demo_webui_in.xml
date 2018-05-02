@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bundle>
+  <Signin>
+    <welcome>Selamat Datang</welcome>
+    <login>Masuk</login>
+    <logout>Keluar</logout>
+    <language>
+      <en>Beralih ke bahasa Inggris</en>
+      <fr>Beralih ke bahasa Prancis</fr>
+    </language>
+    <register>Daftar</register>
+  </Signin>
+  <Toolbar>
+    <SkipToContent>Melewatkan ke konten</SkipToContent>
+    <SiteMap>Peta Situs</SiteMap>
+    <Accessibility>Hak Akses</Accessibility>
+    <NormalSize>Ukuran normal</NormalSize>
+    <MediumSize>Ukuran sedang</MediumSize>
+    <LargeSize>Ukuran besar</LargeSize>
+    <NormalContrast>Kontras Normal</NormalContrast>
+    <HighContrast>Kontras tinggi</HighContrast>
+    <Search>Cari</Search>
+  </Toolbar>
+  <Logo>
+    <GoHome>kembali ke halaman depan</GoHome>
+  </Logo>
+  <acme>
+    <label>Template ACME</label>
+  </acme>  
+  <WAIPortal>
+    <label>Contoh Situs yang Dapat Diakses</label>
+  </WAIPortal>
+</bundle>

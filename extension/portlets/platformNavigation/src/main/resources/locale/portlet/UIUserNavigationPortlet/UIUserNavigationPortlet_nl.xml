@@ -13,13 +13,13 @@
          <Mydashboard>Mijn Dashboard</Mydashboard>
          <NotificationSettingsPortlet>Mijn Notificaties</NotificationSettingsPortlet>
          <More>Meer</More>
-         <EditProfile>Profiel wijzigen</EditProfile>
+         <EditProfile>Bewerken</EditProfile>
          <available>Toon deelnemers als</available>
          <offline>Offline</offline>
          <away>Afwezig</away>
          <donotdisturb>Niet storen</donotdisturb>
          <invisible>Onzichtbaar</invisible>
-         <bannerSizeHint>Pick an image of 130 pixels height minimum.</bannerSizeHint>
+         <bannerSizeHint>Kies een afbeelding van minimaal 130 pixels hoog.</bannerSizeHint>
       </label>
    </UIUserNavigationPortlet>
    <UIAvatarUploaderPopup>

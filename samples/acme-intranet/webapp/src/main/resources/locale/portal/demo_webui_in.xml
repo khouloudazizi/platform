@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bundle>
+  <Signin>
+    <welcome>Selamat Datang</welcome>
+    <login>Login</login>
+    <logout>Keluar</logout>
+    <language>Ganti Bahasa</language>
+    <register>Daftar</register>
+  </Signin>
+
+  <ACMEPortal>
+    <label>Template ACME</label>
+  </ACMEPortal>
+</bundle>

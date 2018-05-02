@@ -4,22 +4,22 @@
       <label>
          <activities>Activities</activities>
          <profile>Profile</profile>
-         <connections>Connections</connections>
+         <connections>Sambungan</connections>
          <wiki>Wiki</wiki>
          <Myactivities>My Activities</Myactivities>
          <Myprofile>My Profile</Myprofile>
-         <Myconnections>My Connections</Myconnections>
+         <Myconnections>Sambungan Saya</Myconnections>
          <Mywiki>My Wiki</Mywiki>
          <Mydashboard>My Dashboard</Mydashboard>
          <NotificationSettingsPortlet>My Notifications</NotificationSettingsPortlet>
          <More>More</More>
-         <EditProfile>Edit Profile</EditProfile>
+         <EditProfile>Sunting</EditProfile>
          <available>Available</available>
          <offline>Offline</offline>
          <away>Away</away>
          <donotdisturb>Do not disturb</donotdisturb>
          <invisible>Invisible</invisible>
-         <bannerSizeHint>Pick an image of 130 pixels height minimum.</bannerSizeHint>
+         <bannerSizeHint>Choose an image at least 130 pixels high.</bannerSizeHint>
       </label>
    </UIUserNavigationPortlet>
    <UIAvatarUploaderPopup>
