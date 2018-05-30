@@ -919,7 +919,7 @@
         this.show();
       }
 
-      docContentContainer.load('/rest/private/contentviewer/' + this.settings.doc.repository + '/' + this.settings.doc.workspace + '/' + this.settings.doc.id + '/' + eXo.env.portal.language, function() {
+      docContentContainer.load('/rest/private/contentviewer/' + this.settings.doc.repository + '/' + this.settings.doc.workspace + '/' + this.settings.doc.id +"?lang="+eXo.env.portal.language, function() {
         $('.loading', docContentContainer).hide();
         resizeEventHandler();
       });
