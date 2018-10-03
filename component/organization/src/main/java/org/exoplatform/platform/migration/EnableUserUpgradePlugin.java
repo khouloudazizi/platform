@@ -92,10 +92,12 @@ public class EnableUserUpgradePlugin extends UpgradeProductPlugin {
                     nb = count.getInt(1);
 
                     findItemsStatement = connection.prepareStatement(SELECT_ENABLE_ATTRIBUTE);
-                    findItemsStatement.setFetchSize(1000);
 
                     LOG.info("Start Select items NAME=enabled and ATTR_VALUE=true");
                     rs = findItemsStatement.executeQuery();
+                    int totalFetchSize = rs.getFetchSize();
+                    findItemsStatement.setFetchSize(totalFetchSize);
+
 
 
                     StringBuilder temp= new StringBuilder();
@@ -104,7 +106,7 @@ public class EnableUserUpgradePlugin extends UpgradeProductPlugin {
                     while (rs.next()) {
                         i++;
                         temp.append(rs.getString(COLUMN_ID));
-                        if (i % 1000 == 0) {
+                        if (i % totalFetchSize == 0) {
                             removeBatch(connection, temp.toString());
                             connection.commit();
                             LOG.info("Clean in progress : {}/{}", i, nb);
@@ -113,7 +115,7 @@ public class EnableUserUpgradePlugin extends UpgradeProductPlugin {
                             temp.append(",");
                         }
                     }
-                    if(i% 1000 != 0){
+                    if(i% totalFetchSize != 0){
                         removeBatch(connection, temp.substring(0, temp.lastIndexOf(",")));
                         connection.commit();
                         LOG.info("Clean in progress : {}/{}", i, nb);
