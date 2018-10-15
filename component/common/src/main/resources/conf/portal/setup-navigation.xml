@@ -4,6 +4,12 @@
     <priority>1</priority>
     <page-nodes>
         <node>
+            <uri>spaceAdministration</uri>
+            <name>spaceAdministration</name>
+            <label>Space</label>
+            <page-reference>group::/platform/administrators::spaceAdministration</page-reference>
+        </node>
+        <node>
             <uri>org</uri>
             <name>org</name>
             <label>#{UISetupPlatformToolBarPortlet.label.users}</label>

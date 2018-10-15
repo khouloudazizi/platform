@@ -27,6 +27,12 @@
     <priority>2</priority>
 
     <page-nodes>
+       <node>
+            <uri>spaceAdministration</uri>
+            <name>spaceAdministration</name>
+            <label>Space</label>
+            <page-reference>group::/platform/administrators::spaceAdministration</page-reference>
+        </node>
         <node>
             <uri>administration</uri>
             <name>administration</name>
