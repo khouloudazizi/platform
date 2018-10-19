@@ -34,7 +34,7 @@
         <portlet-application>
             <portlet>
                 <application-ref>spaceAdministration</application-ref>
-                <portlet-ref>space-administration</portlet-ref>
+                <portlet-ref>spacesAdministration</portlet-ref>
             </portlet>
             <access-permissions>*:/platform/administrators</access-permissions>
             <show-info-bar>false</show-info-bar>
