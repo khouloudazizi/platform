@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+  <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 
     Copyright (C) 2009 eXo Platform SAS.
@@ -28,10 +28,10 @@
 
     <page-nodes>
        <node>
-            <uri>spaceAdministration</uri>
-            <name>spaceAdministration</name>
-            <label>Space</label>
-            <page-reference>group::/platform/administrators::spaceAdministration</page-reference>
+            <uri>spacesAdministration</uri>
+            <name>spacesAdministration</name>
+            <label>Spaces</label>
+            <page-reference>group::/platform/administrators::spacesAdministration</page-reference>
         </node>
         <node>
             <uri>administration</uri>

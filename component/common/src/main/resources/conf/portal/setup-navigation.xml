@@ -4,10 +4,10 @@
     <priority>1</priority>
     <page-nodes>
         <node>
-            <uri>spaceAdministration</uri>
-            <name>spaceAdministration</name>
-            <label>Space</label>
-            <page-reference>group::/platform/administrators::spaceAdministration</page-reference>
+            <uri>spacesAdministration</uri>
+            <name>spacesAdministration</name>
+            <label>Spaces</label>
+            <page-reference>group::/platform/administrators::spacesAdministration</page-reference>
         </node>
         <node>
             <uri>org</uri>

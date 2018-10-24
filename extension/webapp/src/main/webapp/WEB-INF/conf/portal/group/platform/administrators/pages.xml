@@ -26,15 +26,15 @@
         xmlns="http://www.gatein.org/xml/ns/gatein_objects_1_2">
     
     <page>
-        <name>spaceAdministration</name>
-        <title>Space Administration</title>
+        <name>spacesAdministration</name>
+        <title>Spaces Administration</title>
         <access-permissions>*:/platform/administrators</access-permissions>
         <edit-permission>*:/platform/administrators</edit-permission>
         <show-max-window>false</show-max-window>
         <portlet-application>
             <portlet>
-                <application-ref>spaceAdministration</application-ref>
-                <portlet-ref>spacesAdministration</portlet-ref>
+                <application-ref>social-vue-portlet</application-ref>
+                <portlet-ref>SpacesAdministration</portlet-ref>
             </portlet>
             <access-permissions>*:/platform/administrators</access-permissions>
             <show-info-bar>false</show-info-bar>
