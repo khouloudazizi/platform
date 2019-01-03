@@ -44,20 +44,8 @@ public class LoginHistoryUpgradePlugin extends UpgradeProductPlugin {
     if (!hasDataToMigrate()) {
       LOG.info("No Login History data to migrate from JCR to RDBMS");
       return;
-    }
-    long startTime = System.currentTimeMillis();
-    Long from = 946681200000L;
-
-    try {
-      List<LoginHistoryBean> loginHistoryBeanList = jcrLoginHistoryStorage.getLoginHistory(ALL_USERS,from,startTime);
-
-      for (LoginHistoryBean loginHistoryBean : loginHistoryBeanList) {
-        long loginDate = loginHistoryBean.getLoginTime();
-        String userId = loginHistoryBean.getUserId();
-        jpaLoginHistoryStorage.addLoginHistoryEntry(userId, loginDate);
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
+    } else {
+      migrateLoginHistory();
     }
   }
 
@@ -78,5 +66,22 @@ public class LoginHistoryUpgradePlugin extends UpgradeProductPlugin {
       e.printStackTrace();
     }
     return hasDataToMigrate;
+  }
+
+  private void migrateLoginHistory() {
+    long startTime = System.currentTimeMillis();
+    Long from = 946681200000L;
+
+    try {
+      List<LoginHistoryBean> loginHistoryBeanList = jcrLoginHistoryStorage.getLoginHistory(ALL_USERS,from,startTime);
+
+      for (LoginHistoryBean loginHistoryBean : loginHistoryBeanList) {
+        long loginDate = loginHistoryBean.getLoginTime();
+        String userId = loginHistoryBean.getUserId();
+        jpaLoginHistoryStorage.addLoginHistoryEntry(userId, loginDate);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 }
