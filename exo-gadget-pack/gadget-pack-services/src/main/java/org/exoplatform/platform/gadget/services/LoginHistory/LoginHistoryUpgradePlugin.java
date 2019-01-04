@@ -11,7 +11,6 @@ import org.exoplatform.services.jcr.ext.common.SessionProvider;
 
 import javax.jcr.Session;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
 
 import static org.eclipse.jetty.http.HttpParser.LOG;
 
@@ -19,8 +18,6 @@ public class LoginHistoryUpgradePlugin extends UpgradeProductPlugin {
   private JCRLoginHistoryStorageImpl jcrLoginHistoryStorage;
 
   private JPALoginHistoryStorageImpl jpaLoginHistoryStorage;
-
-  private ExecutorService            executorService;
 
   // List of migration error
   private Set<String>                loginHistoryErrorsList = new HashSet<>();
@@ -56,7 +53,6 @@ public class LoginHistoryUpgradePlugin extends UpgradeProductPlugin {
 
   private Boolean hasDataToMigrate() {
     boolean hasDataToMigrate = true;
-    JCRLoginHistoryStorageImpl jcrStorage = new JCRLoginHistoryStorageImpl(repositoryService);
     SessionProvider sProvider = SessionProvider.createSystemProvider();
     try {
       Session session = getSession(sProvider);
@@ -74,6 +70,7 @@ public class LoginHistoryUpgradePlugin extends UpgradeProductPlugin {
 
     try {
       List<LoginHistoryBean> loginHistoryBeanList = jcrLoginHistoryStorage.getLoginHistory(ALL_USERS,from,startTime);
+      Collections.reverse(loginHistoryBeanList);
 
       for (LoginHistoryBean loginHistoryBean : loginHistoryBeanList) {
         long loginDate = loginHistoryBean.getLoginTime();
