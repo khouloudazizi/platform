@@ -13,6 +13,7 @@
 
 <script>
   import * as whoIsOnlineServices from '../whoIsOnlineServices';
+  import { exoConstants } from '../../js/eXoConstants.js';
 
   export default {
     data() {
@@ -30,9 +31,45 @@
     methods: {
       initOnlineUsers() {
         whoIsOnlineServices.getOnlineUsers(eXo.env.portal.spaceId).then(response => {
+          var got;
           if (response) {
-            this.users = response.users;
+            got = response.users;
+            if (got && got.length > 0) {
+              for (let el of got) {
+                el.href = `${exoConstants.PORTAL_BASE_URL}profile/` + el.username;
+                if (!el.avatar) {
+                  el.avatar = `${exoConstants.SOCIAL_USER_API}/` + el.username + `/avatar`;
+                }
+                this.users.push(el);
+              }
+              $("#OnlinePortlet").show();
+              this.initPopup();
+            } else {
+              $("#OnlinePortlet").hide();
+            }
           }
+        });
+      },
+      initPopup() {
+        var restUrl = `${exoConstants.PORTAL_NAME}/${exoConstants.PORTAL_REST}/social/people/getPeopleInfo/{0}.json`;
+        var labels = {
+          youHaveSentAnInvitation: this.$t("message.label"),
+          StatusTitle: this.$t("Loading.label"),
+          Connect: this.$t("Connect.label"),
+          Confirm: this.$t("Confirm.label"),
+          CancelRequest: this.$t("CancelRequest.label"),
+          RemoveConnection: this.$t("RemoveConnection.label"),
+          Ignore: this.$t("Ignore.label")
+        };
+        $('#onlineList').find('a').each(function (idx, el) {
+          $(el).userPopup({
+            restURL: restUrl,
+            labels: labels,
+            content: false,
+            defaultPosition: "left",
+            keepAlive: true,
+            maxWidth: "240px"
+          });
         });
       }
     }
