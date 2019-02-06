@@ -28,6 +28,9 @@
         this.initOnlineUsers();
       }.bind(this), 60000);
     },
+    updated() {
+      this.initPopup();
+    },
     methods: {
       initOnlineUsers() {
         whoIsOnlineServices.getOnlineUsers(eXo.env.portal.spaceId).then(response => {
@@ -35,6 +38,7 @@
           if (response) {
             got = response.users;
             if (got && got.length > 0) {
+              this.users = [];
               for (let el of got) {
                 el.href = `${exoConstants.PORTAL_BASE_URL}profile/` + el.username;
                 if (!el.avatar) {
@@ -43,7 +47,6 @@
                 this.users.push(el);
               }
               $("#OnlinePortlet").show();
-              this.initPopup();
             } else {
               $("#OnlinePortlet").hide();
             }
@@ -51,7 +54,7 @@
         });
       },
       initPopup() {
-        var restUrl = `${exoConstants.PORTAL_NAME}/${exoConstants.PORTAL_REST}/social/people/getPeopleInfo/{0}.json`;
+        var restUrl = `//${exoConstants.HOST_NAME}${exoConstants.PORTAL}/${exoConstants.PORTAL_REST}/social/people/getPeopleInfo/{0}.json`;
         var labels = {
           youHaveSentAnInvitation: this.$t("message.label"),
           StatusTitle: this.$t("Loading.label"),

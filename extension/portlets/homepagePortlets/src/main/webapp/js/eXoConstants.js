@@ -4,5 +4,6 @@ export const exoConstants = {
     PORTAL_NAME: eXo.env.portal.portalName || '',
     PORTAL_REST: eXo.env.portal.rest,
     SOCIAL_USER_API: `${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/users`,
-    PORTAL_BASE_URL: eXo.env.server.portalBaseURL
+    PORTAL_BASE_URL: eXo.env.server.portalBaseURL,
+    HOST_NAME: window.location.host
 };
