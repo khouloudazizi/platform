@@ -40,7 +40,7 @@
             if (got && got.length > 0) {
               this.users = [];
               for (let el of got) {
-                el.href = `${exoConstants.PORTAL_BASE_URL}profile/` + el.username;
+                el.href = `${exoConstants.PORTAL}/${exoConstants.PORTAL_NAME}/profile/` + el.username;
                 if (!el.avatar) {
                   el.avatar = `${exoConstants.SOCIAL_USER_API}/` + el.username + `/avatar`;
                 }
