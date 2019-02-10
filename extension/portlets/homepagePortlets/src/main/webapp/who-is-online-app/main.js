@@ -2,7 +2,7 @@ import './components/initComponents.js';
 import { exoConstants } from '../js/eXoConstants.js';
 
 // getting language of the PLF
-const lang = typeof eXo !== 'undefined' ? eXo.env.portal.language : 'en';
+const lang = `${exoConstants.LANG}`;
 
 // should expose the locale ressources as REST API
 const url = `${exoConstants.PORTAL}/${exoConstants.PORTAL_REST}/i18n/bundle/locale.portlet.whoisonline.whoisonline-${lang}.json`;
