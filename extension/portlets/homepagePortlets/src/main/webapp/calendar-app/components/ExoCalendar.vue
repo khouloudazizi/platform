@@ -13,7 +13,7 @@
         </div>
       </h6>
       <a v-exo-tooltip.bottom.body="$t('settings.label')" v-show="spaceId === '' && !isSettings" class="settingsLink actionIcon pull-right" @click="renderSettings()"><i class="uiIconSetting uiIconLightGray"></i> </a>
-      <div v-if="isSettings" id="manage" class="tab-pane fade in active">
+      <div v-if="isSettings && spaceId === ''" id="manage" class="tab-pane fade in active">
         <exo-calendar-settings :displayed="allDisplayedCals" :nondisplayed="nonDisplayedCals" @savedCalendar="eventSavedCalendar"></exo-calendar-settings>
       </div>
       <!-- events -->
@@ -83,6 +83,9 @@
     },
     created() {
       this.initCalendar();
+      setTimeout(function () {
+        this.initCalendar();
+      }, 100);
     },
     methods: {
       initCalendar() {
