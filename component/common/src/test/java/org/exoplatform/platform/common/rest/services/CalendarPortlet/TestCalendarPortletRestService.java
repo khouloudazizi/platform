@@ -6,8 +6,12 @@ import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.services.test.mock.MockHttpServletRequest;
+import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class TestCalendarPortletRestService extends BaseRestServicesTestCase {
 
@@ -27,6 +31,10 @@ public class TestCalendarPortletRestService extends BaseRestServicesTestCase {
         ConversationState.setCurrent(new ConversationState(identity));
         ContainerResponse resp =
                 launcher.service("GET", path, "", null, null, envctx);
-        assertEquals(500, resp.getStatus());
+        assertEquals(200, resp.getStatus());
+        String response = resp.getEntity().toString();
+        JSONObject responseObject = new JSONObject(response);
+        assertEquals(responseObject.get("date_act").toString(), DateFormat.getDateInstance(DateFormat.SHORT, new Locale("en")).format(new Date()));
+
     }
 }

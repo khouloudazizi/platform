@@ -215,7 +215,12 @@ public class MockCalendarService implements CalendarService {
 
     @Override
     public List<Calendar> getUserCalendars(String s, boolean b) throws Exception {
-        return null;
+        Calendar calendar = new Calendar("idUser");
+        calendar.setCalType(0);
+        calendar.setName("Root Root");
+        calendar.setCalendarColor("asparagus");
+        calendar.setTimeZone("Europe/Brussels");
+        return new ArrayList<Calendar>(){{add(calendar);}};
     }
 
     @Override
@@ -260,7 +265,14 @@ public class MockCalendarService implements CalendarService {
 
     @Override
     public List<GroupCalendarData> getGroupCalendars(String[] strings, boolean b, String s) throws Exception {
-        return null;
+        Calendar calendar = new Calendar("idGroups");
+        calendar.setCalType(2);
+        calendar.setName("Users");
+        calendar.setCalendarColor("asparagus");
+        calendar.setTimeZone("Europe/Brussels");
+        return new ArrayList<GroupCalendarData>(){{
+            add(new GroupCalendarData("/platform/users", "/platform/users", new ArrayList<Calendar>(){{add(calendar);}}));
+        }};
     }
 
     @Override
