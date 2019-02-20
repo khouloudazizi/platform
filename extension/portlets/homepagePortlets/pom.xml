@@ -96,7 +96,7 @@
   </dependencies>
   <build>
     <finalName>homepage-portlets</finalName>
-      <plugins>
+    <plugins>
     <!--
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
