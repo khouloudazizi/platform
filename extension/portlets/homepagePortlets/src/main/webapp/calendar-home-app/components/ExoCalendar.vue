@@ -66,7 +66,6 @@ export default {
       dateLabel: `${this.$t('today.label')}: ${new Date().toLocaleDateString(exoConstants.LANG)}`,
       spaceId: `${exoConstants.SPACE_ID}`,
       isSettings: false,
-      nbclick: 0,
       ONE_DAY_MS: 86399999,
       SECOND_INDEX: 2,
       THIRD_INDEX: 3,
