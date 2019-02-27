@@ -134,8 +134,6 @@ export default {
       }
     },
     filterEvents() {
-      this.displayedCalendars = [];
-      this.displayedEvents = [];
       for (const evt of this.allEvents) {
         const notDisplayedFound = this.findObjectById(this.nonDisplayedCals, evt.calendarId);
         if (!notDisplayedFound) {
@@ -143,6 +141,8 @@ export default {
           if (displayedFound) {
             if (!this.findObjectById(this.displayedCalendars, displayedFound.id)) {
               this.displayedCalendars.push(displayedFound);
+            }
+            if (!this.findObjectById(this.displayedEvents, evt.id)) {
               this.displayedEvents.push(evt);
             }
           }
@@ -150,10 +150,9 @@ export default {
       }
     },
     filterSpaceEvents() {
-      this.displayedEvents = [];
       for (const evt of this.allEvents) {
         const displayedFound = this.findObjectById(this.displayedCalendars, evt.calendarId);
-        if (displayedFound) {
+        if (displayedFound && !this.findObjectById(this.displayedEvents, evt.id)) {
           this.displayedEvents.push(evt);
         }
       }
