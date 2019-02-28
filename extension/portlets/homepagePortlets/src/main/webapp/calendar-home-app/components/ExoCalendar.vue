@@ -75,10 +75,6 @@ export default {
   },
   created() {
     this.initCalendar();
-    const delay = 100;
-    setInterval(function () {
-      this.initCalendar();
-    }.bind(this), delay);
   },
   methods: {
     initCalendar() {
@@ -88,22 +84,27 @@ export default {
         const end = this.date_act.endOf('day').format(moment.HTML5_FMT.DATETIME_LOCAL_MS);
         calendarServices.getEvents(start, end).then(response => {
           this.allEvents = response.data;
-        });
-        calendarServices.getDisplayedCalendars(this.spaceId).then(response => {
-          if (response) {
-            if (this.spaceId === '') {
-              this.allDisplayedCals = this.parseArray(response.allDisplayedCals);
-              this.nonDisplayedCals = this.parseArray(response.nonDisplayedCals);
-              this.filterEvents();
-            } else {
-              this.displayedCalendars = this.parseArray(response.allDisplayedCals);
-              this.filterSpaceEvents();
-            }
-          }
+          this.getDisplayedEvents();
         });
       }
     },
+    getDisplayedEvents() {
+      calendarServices.getDisplayedCalendars(this.spaceId).then(response => {
+        if (response) {
+          if (this.spaceId === '') {
+            this.allDisplayedCals = this.parseArray(response.allDisplayedCals);
+            this.nonDisplayedCals = this.parseArray(response.nonDisplayedCals);
+            this.filterEvents();
+          } else {
+            this.displayedCalendars = this.parseArray(response.allDisplayedCals);
+            this.filterSpaceEvents();
+          }
+        }
+      });
+    },
     incDecDate(days) {
+      this.displayedCalendars = [];
+      this.displayedEvents = [];
       this.date_act.startOf('day').add(days, 'day');
       const diffDays = this.date_act.diff(moment().startOf('day'), 'days');
       if (diffDays === 0) {
@@ -118,7 +119,7 @@ export default {
       this.initCalendar();
     },
     getEventLink(eventId) {
-      return `${exoConstants.PORTAL}/${exoConstants.PORTAL_NAME}/calendar/details/${eventId}`;
+      return `${exoConstants.BASE_URL}/calendar/details/${eventId}`;
     },
     eventSavedCalendar() {
       this.isSettings = false;

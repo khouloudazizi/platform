@@ -23,7 +23,7 @@ public class TestCalendarPortletRestService extends BaseRestServicesTestCase {
     }
 
     public void testGetDispNonDispCals() throws Exception {
-        String path = "/portlet/homePage/calendar/settings";
+        String path = "/portlet/HomePageCalendarPortlet/settings";
         EnvironmentContext envctx = new EnvironmentContext();
         HttpServletRequest httpRequest =
                 new MockHttpServletRequest(path, null, 0, "GET", null);
@@ -50,7 +50,7 @@ public class TestCalendarPortletRestService extends BaseRestServicesTestCase {
     }
 
     public void testGetDispNonDispCalsFromSpace() throws Exception {
-        String path = "/portlet/homePage/calendar/settings?spaceId=space1";
+        String path = "/portlet/HomePageCalendarPortlet/settings?spaceId=space1";
         EnvironmentContext envctx = new EnvironmentContext();
         HttpServletRequest httpRequest =
                 new MockHttpServletRequest(path, null, 0, "GET", null);
