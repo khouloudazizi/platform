@@ -32,4 +32,17 @@
          <UIBannerUploader>تحميل صورة</UIBannerUploader>
       </title>
    </UIPopupBannerUploader>
+   <UIRelationshipAction>
+      <action>
+         <AcceptRequest>قبول</AcceptRequest>
+         <Deny>رفض</Deny>
+         <RemoveConnection>قطع الاتصال</RemoveConnection>
+         <CancelRequest>الغاء الطّلب</CancelRequest>
+      </action>
+      <label>
+         <Connect>اتصال</Connect>
+         <ConnectNotExisting>تم إلغاء الدعوة من قبل شخص آخر.</ConnectNotExisting>
+         <ConnectionExisted>تمّ إنشاء هذه الدّعوة من قِبل شخص آخر.</ConnectionExisted>
+      </label>
+   </UIRelationshipAction>
 </bundle>
