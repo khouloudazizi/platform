@@ -23,7 +23,7 @@
   <msg name="title">Favoriete documenten</msg>
   <msg name="titleFav">Mijn favorieten</msg>
   <msg name="titleDoc">Mijn documenten</msg>  
-  <msg name="nofav">U hebt geen favoriete document</msg>
-  <msg name="nodoc">Hebt u geen document</msg>
+  <msg name="nofav">U hebt geen favoriet document</msg>
+  <msg name="nodoc">U hebt geen document</msg>
   <msg name="showall">Toon alles</msg>
 </messagebundle>

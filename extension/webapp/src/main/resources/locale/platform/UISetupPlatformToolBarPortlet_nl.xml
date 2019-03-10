@@ -2,13 +2,13 @@
 <bundle>
 <UISetupPlatformToolBarPortlet>
 <label>
-<applications>Applicaties</applications>
+<applications>Toepassingen</applications>
 <content>Inhoud</content>
 <siteExplorer>Sites Explorer</siteExplorer>
-<wcmAdmin>Content Administratie</wcmAdmin>
+<wcmAdmin>Inhoud Administratie</wcmAdmin>
 <users>Gemeenschap</users>
 <newStaff>Gebruikers toevoegen</newStaff>
-<org-management>Gebruikers en groepen beheren</org-management>
+<org-management>Gemeenschap beheren</org-management>
 <portal>Portaal</portal>
 <administration>Beheer</administration>
 <system>Systeem</system>

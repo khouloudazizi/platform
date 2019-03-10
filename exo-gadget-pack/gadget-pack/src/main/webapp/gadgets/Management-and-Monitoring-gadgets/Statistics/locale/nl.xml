@@ -20,10 +20,10 @@
 
 -->
 <messagebundle>
-  <msg name="title_templates">Sjabloon statistieken</msg>
+  <msg name="title_templates">Sjabloonstatistieken</msg>
   <msg name="ten_slowest_templates">10 langzaamste sjablonen</msg>
   <msg name="all_templates">Alle sjablonen</msg>
-  <msg name="title_apps">Toepassing statistieken</msg>
+  <msg name="title_apps">Toepassingsstatistieken</msg>
   <msg name="ten_slowest_apps">10 langzaamste toepassingen</msg>
   <msg name="all_apps">Alle toepassingen</msg>
   <msg name="avg_exec_time">Gemiddelde uitvoeringstijd (ms)</msg>

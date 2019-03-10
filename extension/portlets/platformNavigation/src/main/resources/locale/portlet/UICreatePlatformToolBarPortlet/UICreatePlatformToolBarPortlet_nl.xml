@@ -5,17 +5,17 @@
          <topic>Onderwerp</topic>
          <poll>eXo Poll</poll>
          <event>Evenement</event>
-         <upload>Een bestand uploaden</upload>
-         <wiki>Wiki-pagina</wiki>
+         <upload>Bestand</upload>
+         <wiki>Wiki</wiki>
 
       </label>
    </UIUserPlatformToolBarCreatePortlet>
    <UICreateList>
       <label>
-         <topic>onderwerp</topic>
+         <topic>Onderwerp</topic>
          <poll>poll</poll>
-         <CreateANew>Maak een nieuwe {1}:</CreateANew>
-         <NoForum>Sorry, is geen forum beschikbaar nog voor het maken van een {1}. Begint met het maken van uw eigen ruimte.</NoForum>
+         <CreateANew>Nieuw {1}:</CreateANew>
+         <NoForum>Sorry, er is nog geen forum beschikbaar voor het maken van een {1}. Begin met het maken van uw eigen ruimte.</NoForum>
          <RequireSelectForum>Selecteer een forum.</RequireSelectForum>
       </label>
       <action>
@@ -28,7 +28,7 @@
          <SelectAForum>Selecteer een Forum</SelectAForum>
          <location>Op locatie</location>
          <forumId>En Forum</forumId>
-         <FilterForums>Filter Forums</FilterForums>
+         <FilterForums>Filterforums</FilterForums>
       </label>
    </UICreateTopic>
    <UICreatePoll>
@@ -36,13 +36,13 @@
          <SelectAForum>Selecteer Forum</SelectAForum>
          <location>Op locatie</location>
          <forumId>En Forum</forumId>
-         <FilterForums>Filter Forums</FilterForums>
+         <FilterForums>Filterforums</FilterForums>
       </label>
    </UICreatePoll>
    <UICreateWiki>
       <label>
-         <title>Maak een nieuwe Wiki Page:</title>
-         <location>Op locatie</location>
+         <title>Nieuwe wikipagina:</title>
+         <location>Locatie</location>
       </label>
    </UICreateWiki>
    <UICreateEvent>
@@ -52,7 +52,7 @@
          <Choix>Nieuw toevoegen:</Choix>
          <EndEvent>Aan</EndEvent>
          <StartEvent>Van</StartEvent>
-         <Calendar>Selecteer kalender</Calendar>
+         <Calendar>Kalender</Calendar>
          <all-day>De hele dag</all-day>
          <defaultCalendarId>Standaard</defaultCalendarId>
       </label>
@@ -60,7 +60,7 @@
          <summary-field-required>Het veld "Titel" is vereist.</summary-field-required>
          <fromDate-format>Ongeldig Van datum formaat.</fromDate-format>
          <toDate-format>Aan datum ongeldig formaat.</toDate-format>
-         <logic-required>Sorry, kunt geen u maken een gebeurtenis die wordt beëindigd voordat het begint.</logic-required>
+         <logic-required>Sorry, u kunt geen gebeurtenis creëren die wordt beëindigd voordat het begint.</logic-required>
          <cant-add-event-on-remote-calendar>U kunt geen gebeurtenis aan externe agenda toevoegen</cant-add-event-on-remote-calendar>
          <add-successfully>
             <Event>De gebeurtenis werd toegevoegd aan {1}</Event>

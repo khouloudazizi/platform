@@ -23,15 +23,15 @@
 -->
 <messagebundle>
   <msg name="loginHistory.title">Login geschiedenis</msg>
-  <msg name="loginHistory.user">#{word.user}</msg>
-  <msg name="loginHistory.find">Zoeken</msg>
+  <msg name="loginHistory.user">Gebruiker</msg>
+  <msg name="loginHistory.find">Vinden</msg>
   <msg name="loginHistory.latest">#{word.reset}</msg>
   <msg name="loginHistory.lastLogin">Laatste Login</msg>
   <msg name="loginHistory.beforeThat">Daarvoor</msg>
   <msg name="loginHistory.more">Meer</msg>
   <msg name="loginHistory.stats">Stats</msg>
   <msg name="loginHistory.history">Geschiedenis</msg>
-  <msg name="loginHistory.global">Global</msg>
+  <msg name="loginHistory.global">Globaal</msg>
   <msg name="loginHistory.week">Week</msg>
   <msg name="loginHistory.lastLoginsView">Laatste Logins</msg>
   <msg name="loginHistory.historyView">Geschiedenis</msg>
@@ -46,6 +46,6 @@
   <msg name="loginHistory.allUsers">Alle gebruikers</msg>
   <msg name="loginHistory.unknow">Onbekend</msg>
   <msg name="loginHistory.next">Volgende</msg>
-  <msg name="loginHistory.ago">Ago</msg>
+  <msg name="loginHistory.ago">Geleden</msg>
   <msg name="loginHistory.search_user">Zoek gebruiker</msg>
 </messagebundle>

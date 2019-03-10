@@ -20,10 +20,10 @@
 
 -->
 <messagebundle>
-  <msg name="title">Aanbevolen Poll</msg>
-  <msg name="setting">Zicht Formulier</msg>
+  <msg name="title">Belangrijkste Poll</msg>
+  <msg name="setting">Zicht</msg>
   <msg name="vote">Stemmen</msg>
-  <msg name="voteAgain">Stemming opnieuw</msg>
+  <msg name="voteAgain">Stem opnieuw</msg>
   <msg name="warning">Kies ten minste één optie</msg>
   <msg name="option">Opties</msg>
   <msg name="percent">Procent</msg>

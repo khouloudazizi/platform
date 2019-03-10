@@ -22,18 +22,18 @@
 
 -->
 <messagebundle>
-  <msg name="forums.statistic.title">Forum statistieken</msg>
+  <msg name="forums.statistic.title">Forumstatistieken</msg>
   <msg name="forums.statistic.total.topic">Totale onderwerpen:</msg>
   <msg name="forums.statistic.total.post">Totaal aantal berichten:</msg>
-  <msg name="forums.statistic.total.member">Totale leden:</msg>
-  <msg name="forums.statistic.active.member">Onlangs actieve leden:</msg>
-  <msg name="forums.statistic.maximum.user">Maximum aantal gebruikers online:</msg>  
+  <msg name="forums.statistic.total.member">Totaal leden:</msg>
+  <msg name="forums.statistic.active.member">Recentelijk actieve leden:</msg>
+  <msg name="forums.statistic.maximum.user">Maximum aantal online gebruikers:</msg>  
   <msg name="forums.statistic.at">op</msg>  
-  <msg name="forums.weekly.statistic.title">Per week Forum statistieken</msg>
-  <msg name="forums.weekly.statistic.post.open">Post (s) gemaakt</msg>
+  <msg name="forums.weekly.statistic.title">Forums wekelijkse statistieken</msg>
+  <msg name="forums.weekly.statistic.post.open">Post(s) gemaakt</msg>
   <msg name="forums.weekly.statistic.next">Volgende</msg>
   <msg name="forums.weekly.statistic.prev">Vorige</msg>
-  <msg name="forums.weekly.statistic.view.chart">Als de grafiek bekijken</msg>
+  <msg name="forums.weekly.statistic.view.chart">Als grafiek bekijken</msg>
   <msg name="forums.weekly.statistic.view.list">Weergeven als lijst</msg>
   <msg name="forums.statistic.see.total.statistic">Globale statistieken</msg>
   <msg name="forums.statistic.see.weekly.statistic">Wekelijkse Statistieken</msg>  

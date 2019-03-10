@@ -21,7 +21,7 @@
 -->
 <messagebundle>
   <msg name="title">Bladwijzers</msg>
-  <msg name="customize">Aanpassen</msg>
+  <msg name="customize">Personaliseren</msg>
   <msg name="save">#{word.save}</msg>
   <msg name="add">Toevoegen</msg>
   <msg name="ok">OK</msg>
@@ -30,6 +30,6 @@
   <msg name="delete">Verwijderen</msg>
   <msg name="edit">Bewerken</msg>
   <msg name="cancel">Annuleren</msg>
-  <msg name="emptyBookmarkPre">U hoeft niet een bladwijzer. Deze toevoegen door te klikken op de knop "Bladwijzer toevoegen".</msg>
+  <msg name="emptyBookmarkPre">U hebt geen enkel bladwijzer. Deze toevoegen door te klikken op de knop "Bladwijzer toevoegen".</msg>
   <msg name="addBookmark">Bladwijzer toevoegen</msg>
 </messagebundle>
